@@ -2224,6 +2224,9 @@ def validate_key_placement(key_layout, world, player):
                 mire_keys_in_swamp = sum([1 if x.item.name == mire_smallkey_name else 0 for x in key_layout.item_locations if x.item is not None and x != swamp_entrance])
                 if mire_keys_in_swamp == 0:
                     keys_outside +=1 
+        # the lobby clip lands past Ice Jelly Key Down Stairs, so that door costs no key
+        if smallkey_name.endswith('(Ice Palace)'):
+            keys_outside += 1
         # Mire keylogic
         if smallkey_name.endswith('(Tower of Hera)'):
             # TODO: Make sure that mire medallion isn't in hera basement, or if it it, the small key is available downstairs
