@@ -1375,7 +1375,7 @@ def patch_rom(world, rom, player, team, is_mystery=False):
     player_name = '' if world.players == 1 else str(' (' + world.get_player_names(player) + ')')
     world.spoiler.dig_game_digs[player_name] = digging_game_rng
 
-    rom.write_byte(0x1800A3, 0x01)  # enable correct world setting behaviour after agahnim kills
+    rom.write_byte(0x1800A3, 0x00 if glitches_enabled else 0x01)  # enable correct world setting behaviour after agahnim kills
     rom.write_byte(0x1800A4, 0x01 if not glitches_enabled else 0x00)  # enable POD EG fix
     rom.write_byte(0x180042, 0x01 if world.save_and_quit_from_boss else 0x00)  # Allow Save and Quit after boss kill
     rom.write_byte(0x180358, 0x01 if glitches_enabled else 0x00)
