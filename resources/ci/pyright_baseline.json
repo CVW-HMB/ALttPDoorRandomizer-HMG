@@ -1,0 +1,214 @@
+{
+  "Adjuster.py": {
+    "reportArgumentType": 1
+  },
+  "BaseClasses.py": {
+    "reportArgumentType": 14,
+    "reportAttributeAccessIssue": 28,
+    "reportCallIssue": 1,
+    "reportGeneralTypeIssues": 5,
+    "reportOperatorIssue": 1,
+    "reportOptionalMemberAccess": 11,
+    "reportOptionalOperand": 1,
+    "reportRedeclaration": 1
+  },
+  "CLI.py": {
+    "reportArgumentType": 1
+  },
+  "DoorShuffle.py": {
+    "reportAttributeAccessIssue": 8,
+    "reportCallIssue": 7,
+    "reportOptionalMemberAccess": 20
+  },
+  "DungeonGenerator.py": {
+    "reportArgumentType": 5,
+    "reportAttributeAccessIssue": 7,
+    "reportOperatorIssue": 1,
+    "reportOptionalIterable": 3,
+    "reportOptionalMemberAccess": 14
+  },
+  "Fill.py": {
+    "reportAttributeAccessIssue": 16,
+    "reportCallIssue": 1
+  },
+  "Gui.py": {
+    "reportAttributeAccessIssue": 124
+  },
+  "GuiUtils.py": {
+    "reportArgumentType": 2,
+    "reportCallIssue": 1,
+    "reportOptionalMemberAccess": 1
+  },
+  "InitialSram.py": {
+    "reportAttributeAccessIssue": 11
+  },
+  "ItemList.py": {
+    "reportArgumentType": 1,
+    "reportAttributeAccessIssue": 36
+  },
+  "KeyDoorShuffle.py": {
+    "reportArgumentType": 5,
+    "reportAttributeAccessIssue": 5,
+    "reportGeneralTypeIssues": 3,
+    "reportOperatorIssue": 2,
+    "reportOptionalMemberAccess": 43
+  },
+  "Main.py": {
+    "reportArgumentType": 3,
+    "reportAttributeAccessIssue": 89,
+    "reportOptionalMemberAccess": 2
+  },
+  "MultiClient.py": {
+    "reportArgumentType": 3,
+    "reportAttributeAccessIssue": 18,
+    "reportGeneralTypeIssues": 14,
+    "reportOptionalMemberAccess": 2,
+    "reportOptionalSubscript": 10
+  },
+  "MultiServer.py": {
+    "reportArgumentType": 2,
+    "reportAttributeAccessIssue": 3,
+    "reportCallIssue": 2,
+    "reportOperatorIssue": 3,
+    "reportOptionalOperand": 3,
+    "reportOptionalSubscript": 2
+  },
+  "Plando.py": {
+    "reportAttributeAccessIssue": 6,
+    "reportCallIssue": 5,
+    "reportOptionalMemberAccess": 4
+  },
+  "Regions.py": {
+    "reportAttributeAccessIssue": 3,
+    "reportOptionalSubscript": 1
+  },
+  "Rom.py": {
+    "reportArgumentType": 6,
+    "reportAttributeAccessIssue": 7,
+    "reportOptionalMemberAccess": 14,
+    "reportOptionalOperand": 3,
+    "reportOptionalSubscript": 2
+  },
+  "RoomData.py": {
+    "reportOptionalSubscript": 2
+  },
+  "Rules.py": {
+    "reportOptionalIterable": 1
+  },
+  "TestSuite.py": {
+    "reportAttributeAccessIssue": 10,
+    "reportOptionalMemberAccess": 7
+  },
+  "source/classes/BabelFish.py": {
+    "none": 2,
+    "reportArgumentType": 2,
+    "reportOperatorIssue": 2,
+    "reportOptionalSubscript": 1
+  },
+  "source/classes/CustomSettings.py": {
+    "reportArgumentType": 2,
+    "reportCallIssue": 1,
+    "reportOperatorIssue": 17,
+    "reportOptionalIterable": 5,
+    "reportOptionalMemberAccess": 1,
+    "reportOptionalSubscript": 23
+  },
+  "source/classes/SFX.py": {
+    "reportAttributeAccessIssue": 2
+  },
+  "source/classes/SpriteSelector.py": {
+    "reportAttributeAccessIssue": 1
+  },
+  "source/dungeon/DungeonStitcher.py": {
+    "reportArgumentType": 1,
+    "reportOptionalMemberAccess": 10
+  },
+  "source/dungeon/EnemyList.py": {
+    "reportAttributeAccessIssue": 2,
+    "reportGeneralTypeIssues": 2
+  },
+  "source/enemizer/Enemizer.py": {
+    "reportIndexIssue": 4
+  },
+  "source/enemizer/EnemizerTestHarness.py": {
+    "reportAttributeAccessIssue": 8,
+    "reportCallIssue": 4,
+    "reportOptionalSubscript": 4
+  },
+  "source/enemizer/SpriteSheets.py": {
+    "reportArgumentType": 1
+  },
+  "source/gui/adjust/overview.py": {
+    "reportAttributeAccessIssue": 43
+  },
+  "source/gui/bottom.py": {
+    "reportAttributeAccessIssue": 38,
+    "reportOptionalMemberAccess": 3
+  },
+  "source/gui/custom/overview.py": {
+    "reportAttributeAccessIssue": 13
+  },
+  "source/gui/randomize/dungeon.py": {
+    "reportAttributeAccessIssue": 13
+  },
+  "source/gui/randomize/enemizer.py": {
+    "reportAttributeAccessIssue": 18
+  },
+  "source/gui/randomize/entrando.py": {
+    "reportAttributeAccessIssue": 7
+  },
+  "source/gui/randomize/gameoptions.py": {
+    "reportAttributeAccessIssue": 20
+  },
+  "source/gui/randomize/generation.py": {
+    "reportAttributeAccessIssue": 62
+  },
+  "source/gui/randomize/item.py": {
+    "reportArgumentType": 2,
+    "reportAttributeAccessIssue": 36
+  },
+  "source/gui/randomize/multiworld.py": {
+    "reportAttributeAccessIssue": 22
+  },
+  "source/gui/startinventory/overview.py": {
+    "reportAttributeAccessIssue": 13
+  },
+  "source/gui/widgets.py": {
+    "reportAttributeAccessIssue": 78,
+    "reportOptionalMemberAccess": 2,
+    "reportOptionalSubscript": 1
+  },
+  "source/item/FillUtil.py": {
+    "reportAttributeAccessIssue": 25,
+    "reportOptionalSubscript": 14
+  },
+  "source/logic/Rule.py": {
+    "reportAttributeAccessIssue": 4,
+    "reportGeneralTypeIssues": 2
+  },
+  "source/meta/build.py": {
+    "reportOptionalIterable": 1
+  },
+  "source/overworld/EntranceShuffle2.py": {
+    "reportArgumentType": 2,
+    "reportAttributeAccessIssue": 2
+  },
+  "source/rom/DataTables.py": {
+    "reportAttributeAccessIssue": 21,
+    "reportOperatorIssue": 1,
+    "reportOptionalSubscript": 11
+  },
+  "source/tools/BPS.py": {
+    "reportGeneralTypeIssues": 1
+  },
+  "source/tools/Bias.py": {
+    "reportArgumentType": 5
+  },
+  "source/tools/MysteryUtils.py": {
+    "reportArgumentType": 1
+  },
+  "test-options.py": {
+    "reportGeneralTypeIssues": 2,
+    "reportReturnType": 2
+  }
+}
