@@ -4,10 +4,15 @@ import typing
 import yaml
 from yaml.representer import Representer
 
-try:
-    from fast_enum import FastEnum
-except ImportError:
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
     from enum import IntFlag as FastEnum
+else:
+    try:
+        from fast_enum import FastEnum
+    except ImportError:
+        from enum import IntFlag as FastEnum
 
 import RaceRandom as random
 from BaseClasses import Location, LocationType, RegionType

@@ -3,22 +3,22 @@
     "reportArgumentType": 1
   },
   "BaseClasses.py": {
-    "reportArgumentType": 14,
-    "reportAttributeAccessIssue": 28,
-    "reportCallIssue": 1,
-    "reportGeneralTypeIssues": 5,
-    "reportOperatorIssue": 1,
-    "reportOptionalMemberAccess": 11,
-    "reportOptionalOperand": 1,
-    "reportRedeclaration": 1
+    "reportArgumentType": 176,
+    "reportAttributeAccessIssue": 6,
+    "reportCallIssue": 3,
+    "reportOperatorIssue": 6,
+    "reportOptionalMemberAccess": 66,
+    "reportOptionalOperand": 2,
+    "reportRedeclaration": 1,
+    "reportReturnType": 2
   },
   "CLI.py": {
     "reportArgumentType": 1
   },
   "DoorShuffle.py": {
-    "reportAttributeAccessIssue": 8,
+    "reportAttributeAccessIssue": 7,
     "reportCallIssue": 7,
-    "reportOptionalMemberAccess": 20
+    "reportOptionalMemberAccess": 21
   },
   "DungeonGenerator.py": {
     "reportArgumentType": 5,
@@ -28,8 +28,8 @@
     "reportOptionalMemberAccess": 14
   },
   "Fill.py": {
-    "reportAttributeAccessIssue": 16,
-    "reportCallIssue": 1
+    "reportArgumentType": 1,
+    "reportAttributeAccessIssue": 15
   },
   "Gui.py": {
     "reportAttributeAccessIssue": 124
@@ -40,11 +40,12 @@
     "reportOptionalMemberAccess": 1
   },
   "InitialSram.py": {
+    "reportArgumentType": 1,
     "reportAttributeAccessIssue": 11
   },
   "ItemList.py": {
     "reportArgumentType": 1,
-    "reportAttributeAccessIssue": 36
+    "reportAttributeAccessIssue": 30
   },
   "KeyDoorShuffle.py": {
     "reportArgumentType": 5,
@@ -54,9 +55,9 @@
     "reportOptionalMemberAccess": 43
   },
   "Main.py": {
-    "reportArgumentType": 3,
-    "reportAttributeAccessIssue": 89,
-    "reportOptionalMemberAccess": 2
+    "reportArgumentType": 9,
+    "reportAttributeAccessIssue": 2,
+    "reportOptionalMemberAccess": 9
   },
   "MultiClient.py": {
     "reportArgumentType": 3,
@@ -74,18 +75,18 @@
     "reportOptionalSubscript": 2
   },
   "Plando.py": {
-    "reportAttributeAccessIssue": 6,
+    "reportAttributeAccessIssue": 2,
     "reportCallIssue": 5,
     "reportOptionalMemberAccess": 4
   },
   "Regions.py": {
-    "reportAttributeAccessIssue": 3,
+    "reportAttributeAccessIssue": 1,
     "reportOptionalSubscript": 1
   },
   "Rom.py": {
     "reportArgumentType": 6,
     "reportAttributeAccessIssue": 7,
-    "reportOptionalMemberAccess": 14,
+    "reportOptionalMemberAccess": 16,
     "reportOptionalOperand": 3,
     "reportOptionalSubscript": 2
   },
@@ -124,8 +125,7 @@
     "reportOptionalMemberAccess": 10
   },
   "source/dungeon/EnemyList.py": {
-    "reportAttributeAccessIssue": 2,
-    "reportGeneralTypeIssues": 2
+    "reportAttributeAccessIssue": 2
   },
   "source/enemizer/Enemizer.py": {
     "reportIndexIssue": 4
@@ -183,8 +183,7 @@
     "reportOptionalSubscript": 14
   },
   "source/logic/Rule.py": {
-    "reportAttributeAccessIssue": 4,
-    "reportGeneralTypeIssues": 2
+    "reportAttributeAccessIssue": 9
   },
   "source/meta/build.py": {
     "reportOptionalIterable": 1
@@ -197,9 +196,6 @@
     "reportAttributeAccessIssue": 21,
     "reportOperatorIssue": 1,
     "reportOptionalSubscript": 11
-  },
-  "source/tools/BPS.py": {
-    "reportGeneralTypeIssues": 1
   },
   "source/tools/Bias.py": {
     "reportArgumentType": 5

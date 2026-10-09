@@ -1,10 +1,15 @@
 import itertools
 
 from collections import OrderedDict
-try:
-    from fast_enum import FastEnum
-except ImportError:
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
     from enum import IntFlag as FastEnum
+else:
+    try:
+        from fast_enum import FastEnum
+    except ImportError:
+        from enum import IntFlag as FastEnum
 
 from BaseClasses import CrystalBarrier, KeyRuleType
 from Dungeons import dungeon_keys
