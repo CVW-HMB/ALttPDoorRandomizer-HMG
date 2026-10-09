@@ -1848,7 +1848,7 @@ hook_dir_map = {
 }
 
 
-def hook_from_door(door):
+def hook_from_door(door: Door) -> Hook | None:
     if door.type == DoorType.SpiralStairs:
         return Hook.Stairs
     if door.type in [DoorType.Normal, DoorType.Open, DoorType.StraightStairs, DoorType.Ladder]:
@@ -1857,33 +1857,33 @@ def hook_from_door(door):
 
 
 class Polarity:
-    def __init__(self):
-        self.vector = [0, 0, 0]
+    def __init__(self) -> None:
+        self.vector: list[int] = [0, 0, 0]
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.vector)
 
-    def __add__(self, other):
+    def __add__(self, other: Polarity) -> Polarity:
         result = Polarity()
         for i in range(len(self.vector)):
             result.vector[i] = pol_add[pol_idx_2[i]](self.vector[i], other.vector[i])
         return result
 
-    def __iadd__(self, other):
+    def __iadd__(self, other: Polarity) -> Polarity:
         for i in range(len(self.vector)):
             self.vector[i] = pol_add[pol_idx_2[i]](self.vector[i], other.vector[i])
         return self
 
-    def __getitem__(self, item):
+    def __getitem__(self, item: int) -> int:
         return self.vector[item]
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any) -> bool:
         for i in range(len(self.vector)):
             if self.vector[i] != other.vector[i]:
                 return False
         return True
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         h = 17
         spot = self.vector[0]
         h *= 31 + (spot if spot >= 0 else spot + 100)
@@ -1893,28 +1893,28 @@ class Polarity:
         h *= 73 + (spot if spot >= 0 else spot + 100)
         return h
 
-    def is_neutral(self):
+    def is_neutral(self) -> bool:
         for i in range(len(self.vector)):
             if self.vector[i] != 0:
                 return False
         return True
 
-    def complement(self):
+    def complement(self) -> Polarity:
         result = Polarity()
         for i in range(len(self.vector)):
             result.vector[i] = pol_comp[pol_idx_2[i]](self.vector[i])
         return result
 
-    def charge(self):
+    def charge(self) -> int:
         result = 0
         for i in range(len(self.vector)):
             result += abs(self.vector[i])
         return result
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.__unicode__())
 
-    def __unicode__(self):
+    def __unicode__(self) -> str:
         return f'{self.vector}'
 
 
@@ -1961,67 +1961,67 @@ class CrystalBarrier(FastEnum):
 
 
 class Door(object):
-    def __init__(self, player, name, type, entrance=None):
-        self.player = player
-        self.name = name
-        self.type = type
-        self.direction = None
+    def __init__(self, player: int, name: str, type: DoorType, entrance: Entrance | None = None) -> None:
+        self.player: int = player
+        self.name: str = name
+        self.type: DoorType = type
+        self.direction: Direction | None = None
 
         # rom properties
-        self.roomIndex = -1
+        self.roomIndex: int = -1
         # 0,1,2 for normal
         # 0-7 for ladder
         # 0-4 for spiral offset thing
-        self.doorIndex = -1
-        self.layer = -1  # 0 for normal floor, 1 for the inset layer
-        self.pseudo_bg = 0  # 0 for normal floor, 1 for pseudo bg
-        self.toggle = False
-        self.trapFlag = 0x0
-        self.quadrant = 2
-        self.shiftX = 78
-        self.shiftY = 78
-        self.zeroHzCam = False
-        self.zeroVtCam = False
-        self.doorListPos = -1
-        self.edge_id = None
-        self.edge_width = None
+        self.doorIndex: int | None = -1
+        self.layer: int = -1  # 0 for normal floor, 1 for the inset layer
+        self.pseudo_bg: int = 0  # 0 for normal floor, 1 for pseudo bg
+        self.toggle: bool = False
+        self.trapFlag: int = 0x0
+        self.quadrant: int = 2
+        self.shiftX: int = 78
+        self.shiftY: int = 78
+        self.zeroHzCam: bool = False
+        self.zeroVtCam: bool = False
+        self.doorListPos: int = -1
+        self.edge_id: int | None = None
+        self.edge_width: int | None = None
 
         # portal items
-        self.portalAble = False
-        self.roomLayout = 0x22  # free scroll-  both directions
-        self.entranceFlag = False
-        self.deadEnd = False
-        self.passage = True
-        self.dungeonLink = None
-        self.bk_shuffle_req = False
-        self.standard_restricted = False  # flag if portal is not allowed in HC in standard
-        self.lw_restricted = False  # flag if portal is not allowed in DW
-        self.rupee_bow_restricted = False  # flag if portal is not allowed in HC in standard+rupee_bow
+        self.portalAble: bool = False
+        self.roomLayout: int = 0x22  # free scroll-  both directions
+        self.entranceFlag: bool = False
+        self.deadEnd: bool = False
+        self.passage: bool = True
+        self.dungeonLink: Any = None
+        self.bk_shuffle_req: bool = False
+        self.standard_restricted: bool = False  # flag if portal is not allowed in HC in standard
+        self.lw_restricted: bool = False  # flag if portal is not allowed in DW
+        self.rupee_bow_restricted: bool = False  # flag if portal is not allowed in HC in standard+rupee_bow
         # self.incognitoPos = -1
         # self.sectorLink = False
 
         # logical properties
         # self.connected = False  # combine with Dest?
-        self.dest = None
-        self.blocked = False  # Indicates if the door is normally blocked off as an exit. (Sanc door or always closed)
-        self.blocked_orig = False
-        self.trapped = False
-        self.stonewall = False  # Indicate that the door cannot be enter until exited (Desert Torches, PoD Eye Statue)
-        self.smallKey = False  # There's a small key door on this side
-        self.bigKey = False  # There's a big key door on this side
-        self.ugly = False  # Indicates that it can't be seen from the front (e.g. back of a big key door)
-        self.crystal = CrystalBarrier.Null  # How your crystal state changes if you use this door
-        self.alternative_crystal_rule = False
-        self.req_event = None  # if a dungeon event is required for this door - swamp palace mostly
-        self.controller = None
-        self.dependents = []
-        self.dead = False
+        self.dest: Any = None
+        self.blocked: bool = False  # Indicates if the door is normally blocked off as an exit. (Sanc door or always closed)
+        self.blocked_orig: bool = False
+        self.trapped: bool = False
+        self.stonewall: bool = False  # Indicate that the door cannot be enter until exited (Desert Torches, PoD Eye Statue)
+        self.smallKey: bool = False  # There's a small key door on this side
+        self.bigKey: bool = False  # There's a big key door on this side
+        self.ugly: bool = False  # Indicates that it can't be seen from the front (e.g. back of a big key door)
+        self.crystal: CrystalBarrier = CrystalBarrier.Null  # How your crystal state changes if you use this door
+        self.alternative_crystal_rule: bool = False
+        self.req_event: str | None = None  # if a dungeon event is required for this door - swamp palace mostly
+        self.controller: Door | None = None
+        self.dependents: list[Door] = []
+        self.dead: bool = False
 
-        self.entrance = entrance
+        self.entrance: Entrance | None = entrance
         if entrance is not None and not entrance.door:
             entrance.door = self
 
-    def getAddress(self):
+    def getAddress(self) -> int | None:
         if self.type in [DoorType.Normal, DoorType.StraightStairs]:
             return 0x13A000 + normal_offset_table[self.roomIndex] * 24 + (self.doorIndex + self.direction.value * 3) * 2
         elif self.type == DoorType.SpiralStairs:
@@ -2037,7 +2037,7 @@ class Door(object):
             }
             return base_address[self.direction] + self.edge_id * 3
 
-    def getTarget(self, src):
+    def getTarget(self, src: Door) -> list[int] | None:
         if self.type in [DoorType.Normal, DoorType.StraightStairs]:
             bitmask = 4 * (self.layer ^ 1 if src.toggle else self.layer)
             bitmask += 0x08 * int(self.trapFlag)
@@ -2071,21 +2071,21 @@ class Door(object):
                 bitmask += 0x20 * self.quad_indicator()
                 return [self.roomIndex, bitmask]
 
-    def quad_indicator(self):
+    def quad_indicator(self) -> int:
         if self.direction in [Direction.North, Direction.South]:
             return self.quadrant & 0x1
         elif self.direction in [Direction.East, Direction.West]:
             return (self.quadrant & 0x2) >> 1
         return 0
 
-    def dir(self, direction, room, doorIndex, layer):
+    def dir(self, direction: Direction, room: int, doorIndex: int | None, layer: int) -> Door:
         self.direction = direction
         self.roomIndex = room
         self.doorIndex = doorIndex
         self.layer = layer
         return self
 
-    def ss(self, quadrant, shift_y, shift_x, zero_hz_cam=False, zero_vt_cam=False):
+    def ss(self, quadrant: int, shift_y: int, shift_x: int, zero_hz_cam: bool = False, zero_vt_cam: bool = False) -> Door:
         self.quadrant = quadrant
         self.shiftY = shift_y
         self.shiftX = shift_x
@@ -2093,160 +2093,160 @@ class Door(object):
         self.zeroVtCam = zero_vt_cam
         return self
 
-    def edge(self, edge_id, quadrant, width):
+    def edge(self, edge_id: int, quadrant: int, width: int) -> Door:
         self.edge_id = edge_id
         self.quadrant = quadrant
         self.edge_width = width
         return self
 
-    def kind(self, world):
+    def kind(self, world: World) -> Any:
         if self.roomIndex != -1 and self.doorListPos != -1:
             return world.get_room(self.roomIndex, self.player).kind(self)
         return None
 
-    def small_key(self):
+    def small_key(self) -> Door:
         self.smallKey = True
         return self
 
-    def big_key(self):
+    def big_key(self) -> Door:
         self.bigKey = True
         return self
 
-    def toggler(self):
+    def toggler(self) -> Door:
         self.toggle = True
         return self
 
-    def no_exit(self):
+    def no_exit(self) -> Door:
         self.blocked = self.blocked_orig = self.trapped = True
         return self
 
-    def no_entrance(self):
+    def no_entrance(self) -> Door:
         self.stonewall = True
         return self
 
-    def trap(self, trapFlag):
+    def trap(self, trapFlag: int) -> Door:
         self.trapFlag = trapFlag
         return self
 
-    def pos(self, pos):
+    def pos(self, pos: int) -> Door:
         self.doorListPos = pos
         return self
 
-    def event(self, event):
+    def event(self, event: str) -> Door:
         self.req_event = event
         return self
 
-    def barrier(self, crystal):
+    def barrier(self, crystal: CrystalBarrier) -> Door:
         self.crystal = crystal
         return self
 
-    def c_switch(self):
+    def c_switch(self) -> Door:
         self.crystal = CrystalBarrier.Either
         return self
 
-    def kill(self):
+    def kill(self) -> Door:
         self.dead = True
         return self
 
-    def portal(self, quadrant, roomLayout, pseudo_bg=0):
+    def portal(self, quadrant: int, roomLayout: int, pseudo_bg: int = 0) -> Door:
         self.quadrant = quadrant
         self.roomLayout = roomLayout
         self.pseudo_bg = pseudo_bg
         self.portalAble = True
         return self
 
-    def dead_end(self, allowPassage=False):
+    def dead_end(self, allowPassage: bool = False) -> None:
         self.deadEnd = True
         if allowPassage:
             self.passage = True
         else:
             self.passage = False
 
-    def kind(self, world):
+    def kind(self, world: World) -> Any:
         if self.roomIndex != -1 and self.doorListPos != -1:
             return world.get_room(self.roomIndex, self.player).kind(self)
         return None
 
-    def dungeon_name(self):
+    def dungeon_name(self) -> str:
         return self.entrance.parent_region.dungeon.name if self.entrance.parent_region.dungeon else 'Cave'
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         return isinstance(other, self.__class__) and self.name == other.name
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(self.name)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.__unicode__())
 
-    def __unicode__(self):
+    def __unicode__(self) -> str:
         return '%s' % self.name
 
 
 class Sector(object):
 
-    def __init__(self):
-        self.regions = []
-        self.outstanding_doors = []
-        self.name = None
-        self.r_name_set = None
-        self.chest_locations = 0
-        self.key_only_locations = 0
-        self.c_switch = False
-        self.orange_barrier = False
-        self.blue_barrier = False
-        self.bk_required = False
-        self.bk_provided = False
-        self.conn_balance = None
-        self.branch_factor = None
-        self.dead_end_cnt = None
-        self.entrance_sector = None
-        self.destination_entrance = False
-        self.equations = None
-        self.item_logic = set()
-        self.chest_location_set = set()
+    def __init__(self) -> None:
+        self.regions: list[Region] = []
+        self.outstanding_doors: list[Door] = []
+        self.name: str | None = None
+        self.r_name_set: dict[str, Any] | None = None
+        self.chest_locations: int = 0
+        self.key_only_locations: int = 0
+        self.c_switch: bool = False
+        self.orange_barrier: bool = False
+        self.blue_barrier: bool = False
+        self.bk_required: bool = False
+        self.bk_provided: bool = False
+        self.conn_balance: defaultdict[Any, int] | None = None
+        self.branch_factor: int | None = None
+        self.dead_end_cnt: int | None = None
+        self.entrance_sector: bool | None = None
+        self.destination_entrance: bool = False
+        self.equations: Any = None
+        self.item_logic: set[Any] = set()
+        self.chest_location_set: set[Any] = set()
 
-    def region_set(self):
+    def region_set(self) -> Iterable[str]:
         if self.r_name_set is None:
             self.r_name_set = dict.fromkeys(map(lambda r: r.name, self.regions))
         return self.r_name_set.keys()
 
-    def polarity(self):
+    def polarity(self) -> Polarity:
         pol = Polarity()
         for door in self.outstanding_doors:
             idx, inc = pol_idx[door.direction]
             pol.vector[idx] = pol_inc[inc](pol.vector[idx])
         return pol
 
-    def magnitude(self):
+    def magnitude(self) -> list[int]:
         magnitude = [0, 0, 0]
         for door in self.outstanding_doors:
             idx, inc = pol_idx[door.direction]
             magnitude[idx] = magnitude[idx] + 1
         return magnitude
 
-    def hook_magnitude(self):
+    def hook_magnitude(self) -> list[int]:
         magnitude = [0] * len(Hook)
         for door in self.outstanding_doors:
             idx = hook_from_door(door).value
             magnitude[idx] = magnitude[idx] + 1
         return magnitude
 
-    def outflow(self):
+    def outflow(self) -> int:
         outflow = 0
         for door in self.outstanding_doors:
             if not door.blocked:
                 outflow = outflow + 1
         return outflow
 
-    def adj_outflow(self):
+    def adj_outflow(self) -> int:
         outflow = 0
         for door in self.outstanding_doors:
             if not door.blocked and not door.dead:
                 outflow = outflow + 1
         return outflow
 
-    def branching_factor(self):
+    def branching_factor(self) -> int:
         if self.branch_factor is None:
             self.branch_factor = len(self.outstanding_doors)
             cnt_dead = len([x for x in self.outstanding_doors if x.dead])
@@ -2259,10 +2259,10 @@ class Sector(object):
                         break  # you only ever get one allowance for an entrance region, multiple entrances don't help
         return self.branch_factor
 
-    def branches(self):
+    def branches(self) -> int:
         return max(0, self.branching_factor() - 2)
 
-    def dead_ends(self):
+    def dead_ends(self) -> int:
         if self.dead_end_cnt is None:
             if self.branching_factor() <= 1:
                 self.dead_end_cnt = 1
@@ -2271,7 +2271,7 @@ class Sector(object):
                 self.dead_end_cnt = dead_cnt - 1 if dead_cnt > 2 else 0
         return self.dead_end_cnt
 
-    def is_entrance_sector(self):
+    def is_entrance_sector(self) -> bool:
         if self.entrance_sector is None:
             self.entrance_sector = False
             for region in self.regions:
@@ -2280,7 +2280,7 @@ class Sector(object):
                         self.entrance_sector = True
         return self.entrance_sector
 
-    def get_start_regions(self):
+    def get_start_regions(self) -> list[Region] | None:
         if self.is_entrance_sector():
             starts = []
             for region in self.regions:
@@ -2290,10 +2290,10 @@ class Sector(object):
             return starts
         return None
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.__unicode__())
 
-    def __unicode__(self):
+    def __unicode__(self) -> str:
         if len(self.regions) > 0:
             return f'{self.regions[0].name}'
         return f'{next(iter(self.region_set()))}'
