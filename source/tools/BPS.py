@@ -6,10 +6,15 @@ from time import perf_counter
 
 from collections import defaultdict
 from binascii import crc32
-try:
-    from fast_enum import FastEnum
-except ImportError:
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
     from enum import IntFlag as FastEnum
+else:
+    try:
+        from fast_enum import FastEnum
+    except ImportError:
+        from enum import IntFlag as FastEnum
 
 
 def bps_get_vlv_len(data):

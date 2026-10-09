@@ -6,12 +6,15 @@ import json
 import logging
 from collections import OrderedDict, Counter, deque, defaultdict
 from enum import Enum, unique
-from typing import Any, TYPE_CHECKING
+from typing import Any, Callable, Iterable, Iterator, Optional, TYPE_CHECKING
 
-try:
-    from fast_enum import FastEnum
-except ImportError:
+if TYPE_CHECKING:
     from enum import IntFlag as FastEnum
+else:
+    try:
+        from fast_enum import FastEnum
+    except ImportError:
+        from enum import IntFlag as FastEnum
 
 from source.classes.BabelFish import BabelFish
 from source.classes.SettingTypes import (AccessibilityOption, AlgorithmOption, AnyEnemyLogicOption,
@@ -137,6 +140,50 @@ class World(object):
     can_access_trock_front: dict[int, bool | None]
     can_access_trock_big_chest: dict[int, bool | None]
     can_access_trock_middle: dict[int, bool | None]
+
+    regions: list[Region]
+    dungeons: list[Dungeon]
+    itempool: list[Item]
+    precollected_items: list[Item]
+    state: CollectionState
+    shops: dict[int, list[Shop]]
+    doors: list[Door]
+    rooms: list[Any]
+    required_locations: list[Any]
+    dynamic_regions: list[Region]
+    dynamic_locations: list[Location]
+    spoiler: Spoiler
+    paired_doors: dict[int, Any]
+    dungeon_layouts: dict[int, Any]
+    dungeon_pool: dict[int, Any]
+    inaccessible_regions: dict[int, Any]
+    key_logic: dict[int, Any]
+    key_layout: Any
+    dungeon_portals: Any
+    sanc_portal: dict[int, Any]
+    damage_table: dict[int, Any]
+    _cached_entrances: list[Entrance] | None
+    _cached_locations: list[Location] | None
+    _entrance_cache: dict[Any, Entrance]
+    _location_cache: dict[Any, Location]
+    _door_cache: dict[Any, Door]
+    _room_cache: dict[Any, Any]
+    _portal_cache: dict[Any, Portal]
+    _region_cache: dict[int, dict[str, Region]]
+    enabled_entrances: dict[int, Any]
+    pool_adjustment: dict[int, Any]
+    shuffle_bonk_prizes: bool
+    clock_mode: str
+    rupoor_cost: int
+    lock_aga_door_in_escape: bool
+    save_and_quit_from_boss: bool
+    can_take_damage: bool
+    exp_cache: dict[int, Any]
+    custom_door_types: dict[int, Any]
+    item_pool_config: Any
+    districts: dict[int, Any]
+    custom_entrances: dict[int, Any]
+    check_beatable_only: bool
 
 
     def __init__(self, players, shuffle, doorShuffle, logic, mode, swords, difficulty, difficulty_adjustments,
