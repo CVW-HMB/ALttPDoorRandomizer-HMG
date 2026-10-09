@@ -45,6 +45,18 @@ python -m pytest test/
 python -m pytest test/dungeons/TestDarkPalace.py
 ```
 
+### Type Checking
+```bash
+# Gate: fails only when a (file, rule) pyright error count exceeds resources/ci/pyright_baseline.json
+python resources/ci/typecheck.py            # needs: pip install pyright==1.1.414
+
+# After a change that lowers the count, commit the new baseline with it
+python resources/ci/typecheck.py --update
+```
+Run the gate after any change to `.py` files and before opening a pull request. It is a local script;
+there is no GitHub workflow for it. A regression is listed per line; fix it or, if the error is
+pre-existing noise moved by a line shift, re-run with `--update` and include the baseline in the commit.
+
 ### ROM Generation
 ```bash
 # Basic door shuffle seed
