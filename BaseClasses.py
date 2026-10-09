@@ -1654,37 +1654,37 @@ class RegionType(Enum):
     Dungeon = 4
 
     @property
-    def is_indoors(self):
+    def is_indoors(self) -> bool:
         """Shorthand for checking if Cave or Dungeon"""
         return self in (RegionType.Cave, RegionType.Dungeon)
 
 
 class Region(object):
 
-    def __init__(self, name, type, hint, player):
-        self.name = name
-        self.type = type
-        self.entrances = []
-        self.exits = []
-        self.locations = []
-        self.dungeon = None
-        self.shop = None
-        self.world = None
-        self.is_light_world = False  # will be set aftermaking connections.
-        self.is_dark_world = False
-        self.spot_type = 'Region'
-        self.terrain = None
-        self.hint_text = hint
-        self.recursion_count = 0
-        self.player = player
-        self.crystal_switch = False
+    def __init__(self, name: str, type: RegionType, hint: str, player: int) -> None:
+        self.name: str = name
+        self.type: RegionType = type
+        self.entrances: list[Entrance] = []
+        self.exits: list[Entrance] = []
+        self.locations: list[Location] = []
+        self.dungeon: Dungeon | None = None
+        self.shop: Shop | None = None
+        self.world: World | None = None
+        self.is_light_world: bool = False  # will be set aftermaking connections.
+        self.is_dark_world: bool = False
+        self.spot_type: str = 'Region'
+        self.terrain: Terrain | None = None
+        self.hint_text: str = hint
+        self.recursion_count: int = 0
+        self.player: int = player
+        self.crystal_switch: bool = False
 
-    def can_reach(self, state):
+    def can_reach(self, state: CollectionState) -> bool:
         if state.stale[self.player]:
             state.update_reachable_regions(self.player)
         return self in state.reachable_regions[self.player]
 
-    def can_reach_private(self, state):
+    def can_reach_private(self, state: CollectionState) -> bool:
         for entrance in self.entrances:
             if entrance.can_reach(state):
                 if not self in state.path:
@@ -1692,7 +1692,7 @@ class Region(object):
                 return True
         return False
 
-    def can_fill(self, item):
+    def can_fill(self, item: Item) -> bool | None:
         inside_dungeon_item = ((item.smallkey and self.world.keyshuffle[item.player] == 'none')
                                or (item.bigkey and not self.world.bigkeyshuffle[item.player])
                                or (item.map and not self.world.mapshuffle[item.player])
@@ -1703,34 +1703,34 @@ class Region(object):
             return self.dungeon and self.dungeon.is_dungeon_item(item) and item.player == self.player
         return True
 
-    def is_outdoors(self):
+    def is_outdoors(self) -> bool:
         return self.type in {RegionType.LightWorld, RegionType.DarkWorld}
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.__unicode__())
 
-    def __unicode__(self):
+    def __unicode__(self) -> str:
         return self.world.get_name_string_for_object(self) if self.world else f'{self.name} (Player {self.player})'
 
 
 class Entrance(object):
 
-    def __init__(self, player, name='', parent=None):
-        self.name = name
-        self.parent_region = parent
-        self.connected_region = None
-        self.target = None
-        self.addresses = None
-        self.spot_type = 'Entrance'
-        self.recursion_count = 0
-        self.vanilla = None
-        self.access_rule = lambda state: True
-        self.verbose_rule = None
-        self.player = player
-        self.door = None
-        self.hide_path = False
+    def __init__(self, player: int, name: str = '', parent: Region | None = None) -> None:
+        self.name: str = name
+        self.parent_region: Region | None = parent
+        self.connected_region: Region | None = None
+        self.target: int | None = None
+        self.addresses: int | None = None
+        self.spot_type: str = 'Entrance'
+        self.recursion_count: int = 0
+        self.vanilla: Any = None
+        self.access_rule: Callable[[CollectionState], bool] = lambda state: True
+        self.verbose_rule: Callable[..., Any] | None = None
+        self.player: int = player
+        self.door: Door | None = None
+        self.hide_path: bool = False
 
-    def can_reach(self, state):
+    def can_reach(self, state: CollectionState) -> bool:
         if self.parent_region.can_reach(state) and self.access_rule(state):
             if not self.hide_path and not self in state.path:
                 state.path[self] = (self.name, state.path.get(self.parent_region, (self.parent_region.name, None)))
@@ -1738,69 +1738,69 @@ class Entrance(object):
 
         return False
 
-    def connect(self, region, addresses=None, target=None, vanilla=None):
+    def connect(self, region: Region, addresses: int | None = None, target: int | None = None, vanilla: Any = None) -> None:
         self.connected_region = region
         self.target = target
         self.addresses = addresses
         self.vanilla = vanilla
         region.entrances.append(self)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.__unicode__())
 
-    def __unicode__(self):
+    def __unicode__(self) -> str:
         world = self.parent_region.world if self.parent_region else None
         return world.get_name_string_for_object(self) if world else f'{self.name} (Player {self.player})'
 
 
 class Dungeon(object):
 
-    def __init__(self, name, regions, big_key, small_keys, dungeon_items, player, dungeon_id):
-        self.name = name
-        self.regions = regions
-        self.big_key = big_key
-        self.small_keys = small_keys
-        self.dungeon_items = dungeon_items
-        self.bosses = dict()
-        self.player = player
-        self.world = None
-        self.dungeon_id = dungeon_id
+    def __init__(self, name: str, regions: list[str], big_key: Item | None, small_keys: list[Item], dungeon_items: list[Item], player: int, dungeon_id: int) -> None:
+        self.name: str = name
+        self.regions: list[str] = regions
+        self.big_key: Item | None = big_key
+        self.small_keys: list[Item] = small_keys
+        self.dungeon_items: list[Item] = dungeon_items
+        self.bosses: dict[str | None, Boss | None] = dict()
+        self.player: int = player
+        self.world: World | None = None
+        self.dungeon_id: int = dungeon_id
 
-        self.entrance_regions = []
+        self.entrance_regions: list[Any] = []
 
     @property
-    def boss(self):
+    def boss(self) -> Boss | None:
         return self.bosses.get(None, None)
 
     @boss.setter
-    def boss(self, value):
+    def boss(self, value: Boss | None) -> None:
         self.bosses[None] = value
 
     @property
-    def keys(self):
+    def keys(self) -> list[Item]:
         return self.small_keys + ([self.big_key] if self.big_key else [])
 
     @property
-    def all_items(self):
+    def all_items(self) -> list[Item]:
         return self.dungeon_items + self.keys
 
-    def is_dungeon_item(self, item):
+    def is_dungeon_item(self, item: Item) -> bool:
         return item.player == self.player and item.name in [dungeon_item.name for dungeon_item in self.all_items]
 
-    def count_dungeon_item(self):
+    def count_dungeon_item(self) -> int:
         return len(self.dungeon_items) + 1 if self.big_key_required else 0 + self.key_number
 
-    def incomplete_paths(self):
+    def incomplete_paths(self) -> int:
         ret = 0
         for path in self.paths:
             if not self.path_completion[path]:
                 ret += 1
         return ret
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.__unicode__())
 
-    def __unicode__(self):
+    def __unicode__(self) -> str:
         return self.world.get_name_string_for_object(self) if self.world else f'{self.name} (Player {self.player})'
 
 
