@@ -120,8 +120,8 @@ class World(object):
             set_player_attr('bigkeyshuffle', False)
             set_player_attr('restrict_boss_items', 'none')
             set_player_attr('bombbag', False)
-            set_player_attr('flute_mode', False)
-            set_player_attr('bow_mode', False)
+            set_player_attr('flute_mode', 'normal')
+            set_player_attr('bow_mode', 'progressive')
             set_player_attr('free_lamp_cone', False)
 
             set_player_attr('difficulty_requirements', None)
