@@ -1485,7 +1485,7 @@ def patch_rom(world, rom, player, team, is_mystery=False):
                     rom.write_bytes(room.address(), room.rom_data())
 
     if world.data_tables[player]:
-        colorize_pots = (world.pottery[player] != 'vanilla', 'lottery'
+        colorize_pots = (world.pottery[player] not in ['none', 'lottery']
                          and (world.colorizepots[player] or world.pottery[player] in ['reduced', 'clustered']))
         setup_enemy_dungeon_tables(world, player)
         world.data_tables[player].write_to_rom(rom, colorize_pots, world.enemy_shuffle[player] == 'random')
