@@ -180,7 +180,7 @@ def underworld_glitches_rules(world, player):
     def hera_clip(state):
         hera = world.get_region("Hera 4F", player)
         return (state.can_bomb_clip(hera, player) or state.can_dash_clip(hera, player)) \
-                and state.has("Flippers", player) and state.can_reach(hera) and mire_clip(state)
+                and state.has("Flippers", player) and state.can_reach(hera)
 
     # We use these plus functool.partial because lambdas don't work in loops properly.
     def bomb_clip(state, region, player):
@@ -249,8 +249,9 @@ def underworld_glitches_rules(world, player):
     )
     Rules.add_rule(
         world.get_location("Swamp Palace - Big Chest", player),
-        lambda state: (state.has("Big Key (Misery Mire)", player) or state.has("Big Key (Tower of Hera)", player)) \
-                and state.has("Flippers", player) and mire_clip(state),
+        lambda state: ((state.has("Big Key (Misery Mire)", player) or state.has("Big Key (Tower of Hera)", player))
+                       and state.has("Flippers", player) and mire_clip(state))
+                      or (state.has("Big Key (Tower of Hera)", player) and hera_clip(state)),
         combine="or",
     )
     # We need to set _all_ swamp doors to be openable with mire keys, otherwise the small key can't be behind them - 6 keys because of Pots
