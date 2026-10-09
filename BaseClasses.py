@@ -2662,29 +2662,29 @@ class Shop(object):
 
 class Spoiler(object):
 
-    def __init__(self, world):
-        self.world = world
-        self.hashes = {}
-        self.entrances = {}
-        self.doors = {}
-        self.doorTypes = {}
-        self.lobbies = {}
-        self.medallions = {}
-        self.bottles = {}
-        self.drops = {}
-        self.dig_game_digs = {}
-        self.prize_packs = {}
-        self.ingame_texts = {}        
-        self.playthrough = {}
-        self.unreachables = []
-        self.startinventory = []
-        self.locations = {}
-        self.paths = {}
-        self.metadata = {}
-        self.shops = []
-        self.bosses = OrderedDict()
+    def __init__(self, world: World) -> None:
+        self.world: World = world
+        self.hashes: dict[tuple[int, int], Any] = {}
+        self.entrances: dict[tuple[Any, ...], Any] = {}
+        self.doors: dict[tuple[Any, ...], Any] = {}
+        self.doorTypes: dict[tuple[Any, ...], Any] = {}
+        self.lobbies: dict[tuple[Any, ...], Any] = {}
+        self.medallions: dict[str, Any] = {}
+        self.bottles: dict[str, Any] = {}
+        self.drops: dict[str, Any] = {}
+        self.dig_game_digs: dict[str, Any] = {}
+        self.prize_packs: dict[str, Any] = {}
+        self.ingame_texts: dict[str, Any] = {}        
+        self.playthrough: dict[str, Any] = {}
+        self.unreachables: list[Any] = []
+        self.startinventory: list[str] = []
+        self.locations: dict[str, Any] = {}
+        self.paths: dict[str, Any] = {}
+        self.metadata: dict[str, Any] = {}
+        self.shops: list[dict[str, Any]] = []
+        self.bosses: dict[str, Any] = OrderedDict()
         if world.spoiler_mode == 'settings':
-            self.settings = {'settings'}
+            self.settings: set[str] | dict[Any, Any] = {'settings'}
         elif world.spoiler_mode == 'semi':
             self.settings = {'settings', 'entrances', 'requirements', 'prizes'}
         elif world.spoiler_mode == 'full':
@@ -2695,31 +2695,31 @@ class Spoiler(object):
             self.settings = {}
 
 
-    def set_entrance(self, entrance, exit, direction, player):
+    def set_entrance(self, entrance: Any, exit: Any, direction: str, player: int) -> None:
         if self.world.players == 1:
             self.entrances[(entrance, direction, player)] = OrderedDict([('entrance', entrance), ('exit', exit), ('direction', direction)])
         else:
             self.entrances[(entrance, direction, player)] = OrderedDict([('player', player), ('entrance', entrance), ('exit', exit), ('direction', direction)])
 
-    def set_door(self, entrance, exit, direction, player, d_name):
+    def set_door(self, entrance: Any, exit: Any, direction: str, player: int, d_name: str) -> None:
         if self.world.players == 1:
             self.doors[(entrance, direction, player)] = OrderedDict([('player', player), ('entrance', entrance), ('exit', exit), ('direction', direction), ('dname', d_name)])
         else:
             self.doors[(entrance, direction, player)] = OrderedDict([('player', player), ('entrance', entrance), ('exit', exit), ('direction', direction), ('dname', d_name)])
 
-    def set_lobby(self, lobby_name, door_name, player):
+    def set_lobby(self, lobby_name: str, door_name: str, player: int) -> None:
         if self.world.players == 1:
             self.lobbies[(lobby_name, player)] = {'lobby_name': lobby_name, 'door_name': door_name}
         else:
             self.lobbies[(lobby_name, player)] = {'player': player, 'lobby_name': lobby_name, 'door_name': door_name}
 
-    def set_door_type(self, doorNames, type, player):
+    def set_door_type(self, doorNames: Any, type: Any, player: int) -> None:
         if self.world.players == 1:
             self.doorTypes[(doorNames, player)] = OrderedDict([('doorNames', doorNames), ('type', type)])
         else:
             self.doorTypes[(doorNames, player)] = OrderedDict([('player', player), ('doorNames', doorNames), ('type', type)])
 
-    def parse_meta(self):
+    def parse_meta(self) -> None:
         from Main import __version__ as ERVersion
 
         self.startinventory = list(map(str, self.world.precollected_items))
@@ -2790,7 +2790,7 @@ class Spoiler(object):
                 custom_total = self.world.treasure_hunt_total[p] if isinstance(self.world.treasure_hunt_total, dict) else self.world.treasure_hunt_total
                 self.metadata['triforcegoal'][p], self.metadata['triforcepool'][p] = set_default_triforce(self.metadata['goal'][p], custom_goal, custom_total)
 
-    def parse_data(self):
+    def parse_data(self) -> None:
         self.medallions = OrderedDict()
         if self.world.players == 1:
             self.medallions['Misery Mire'] = self.world.required_medallions[1][0]
@@ -2809,7 +2809,7 @@ class Spoiler(object):
                 self.bottles[f'Waterfall Bottle ({self.world.get_player_names(player)})'] = self.world.bottle_refills[player][0]
                 self.bottles[f'Pyramid Bottle ({self.world.get_player_names(player)})'] = self.world.bottle_refills[player][1]
 
-        def include_item(item):
+        def include_item(item: Any) -> bool:
             return ('items' in self.settings and not item.crystal) or ('prizes' in self.settings and item.crystal)
         self.locations = OrderedDict()
         listed_locations = set()
@@ -2881,7 +2881,7 @@ class Spoiler(object):
                 for portal in self.world.dungeon_portals[player]:
                     self.set_lobby(portal.name, portal.door.name, player)
 
-    def to_json(self):
+    def to_json(self) -> str:
         self.parse_meta()
         self.parse_data()
         out = OrderedDict()
@@ -2908,7 +2908,7 @@ class Spoiler(object):
 
         return json.dumps(out)
 
-    def mystery_meta_to_file(self, filename):
+    def mystery_meta_to_file(self, filename: str) -> None:
         self.parse_meta()
         with open(filename, 'w') as outfile:
             outfile.write(f'ALttP Dungeon Randomizer Version {self.metadata["version"]}\n\n')
@@ -2917,8 +2917,8 @@ class Spoiler(object):
                     outfile.write('\nPlayer %d: %s\n' % (player, self.world.get_player_names(player)))
                 outfile.write('Logic:                           %s\n' % self.metadata['logic'][player])
 
-    def meta_to_file(self, filename):
-        def yn(flag):
+    def meta_to_file(self, filename: str) -> None:
+        def yn(flag: Any) -> str:
             return 'Yes' if flag else 'No'
 
         line_width = 35
@@ -3013,11 +3013,11 @@ class Spoiler(object):
                 outfile.write('Starting Inventory:'.ljust(line_width))
                 outfile.write('\n'.ljust(line_width + 1).join(self.startinventory) + '\n')
 
-    def hashes_to_file(self, filename):
+    def hashes_to_file(self, filename: str) -> None:
         with open(filename, 'r') as infile:
             contents = infile.readlines()
 
-        def insert(lines, i, value):
+        def insert(lines: list[str], i: int, value: str) -> int:
             lines.insert(i, value)
             i += 1
             return i
@@ -3040,7 +3040,7 @@ class Spoiler(object):
             contents = "".join(contents)
             f.write(contents)
 
-    def to_file(self, filename):
+    def to_file(self, filename: str) -> None:
         self.parse_data()
         with open(filename, 'a') as outfile:
             line_width = 35
@@ -3106,7 +3106,7 @@ class Spoiler(object):
                         outfile.write(f'\n\nBosses ({self.world.get_player_names(player)}):\n\n')
                         outfile.write('\n'.join([f'{x}: {y}' for x, y in bossmap.items() if y not in ['Agahnim', 'Agahnim 2', 'Ganon']]))
 
-    def extras(self, filename):
+    def extras(self, filename: str) -> None:
         # todo: conditional on enemy shuffle mode
         with open(filename, 'a') as outfile:
             outfile.write('\n\nOverworld Enemies:\n\n')
@@ -3155,7 +3155,7 @@ class Spoiler(object):
                     for game_text_type, game_text_value in player_ingame_text.items():
                         outfile.write(f'{game_text_type}{player_name}: {game_text_value}\n')
 
-    def playthrough_to_file(self, filename):
+    def playthrough_to_file(self, filename: str) -> None:
         with open(filename, 'a') as outfile:
             # locations: Change up location names; in the instance of a location with multiple sections, it'll try to translate the room name
             # items: Item names
@@ -3253,22 +3253,22 @@ class PotFlags(FastEnum):
 
 
 class Pot(object):
-    def __init__(self, x, y, item, room, flags=PotFlags.Normal, obj=None):
-        self.x = x
-        self.y = y
-        self.item = item
-        self.room = room
-        self.flags = flags
-        self.indicator = None  # 0x80 for standing item, 0xC0 multiworld item
-        self.standing_item_code = None  # standing item code if nay
-        self.obj_ref = obj
-        self.location = None  # location back ref
+    def __init__(self, x: int, y: int, item: PotItem, room: str, flags: PotFlags = PotFlags.Normal, obj: RoomObject | None = None) -> None:
+        self.x: int = x
+        self.y: int = y
+        self.item: PotItem = item
+        self.room: str = room
+        self.flags: PotFlags = flags
+        self.indicator: int | None = None  # 0x80 for standing item, 0xC0 multiworld item
+        self.standing_item_code: int | None = None  # standing item code if nay
+        self.obj_ref: RoomObject | None = obj
+        self.location: Location | None = None  # location back ref
 
-    def copy(self):
+    def copy(self) -> Pot:
         obj_ref = RoomObject(self.obj_ref.address, self.obj_ref.data) if self.obj_ref else None
         return Pot(self.x, self.y, self.item, self.room, self.flags, obj_ref)
 
-    def pot_data(self):
+    def pot_data(self) -> list[Any]:
         high_byte = self.y
         if self.flags & PotFlags.LowerRegion:
             high_byte |= 0x20
@@ -3277,13 +3277,13 @@ class Pot(object):
         item = self.item if not self.indicator else self.standing_item_code
         return [self.x, high_byte, item]
 
-    def get_region(self, world, player):
+    def get_region(self, world: World, player: int) -> Region:
         return world.get_region(self.room, 1)
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any) -> bool:
         return self.x == other.x and self.y == other.y and self.room == other.room
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash((self.x, self.y, self.room))
 
 
@@ -3361,7 +3361,7 @@ settings_version = 1
 class Settings(object):
 
     @staticmethod
-    def make_code(w, p):
+    def make_code(w: World, p: int) -> str:
         code = bytes([
             (dr_mode[w.doorShuffle[p]] << 5) | er_mode[w.shuffle[p]],
 
@@ -3408,7 +3408,7 @@ class Settings(object):
         return base64.b64encode(code, "+-".encode()).decode()
 
     @staticmethod
-    def adjust_args_from_code(code, player, args):
+    def adjust_args_from_code(code: str, player: int, args: Any) -> None:
         settings, p = base64.b64decode(code.encode(), "+-".encode()), player
 
         if len(settings) < 12:
@@ -3416,7 +3416,7 @@ class Settings(object):
         if settings[10] != settings_version:
             raise Exception('Provided code is incompatible with this version')
 
-        def r(d):
+        def r(d: dict[Any, Any]) -> dict[Any, Any]:
             return {y: x for x, y in d.items()}
 
         args.shuffle[p] = r(er_mode)[settings[0] & 0x1F]
