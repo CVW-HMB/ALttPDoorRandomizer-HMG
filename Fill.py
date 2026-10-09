@@ -279,7 +279,7 @@ def is_dungeon_item(item, world):
 def recovery_placement(item_to_place, locations, world, state, base_state, itempool, perform_access_check, attempted,
                        key_pool=None, single_player_placement=False):
     logging.getLogger('').debug(f'Could not place {item_to_place} attempting recovery')
-    if world.algorithm in ['balanced', 'equitable']:
+    if world.algorithm == 'balanced':
         return last_ditch_placement(item_to_place, locations, world, state, base_state, itempool, key_pool,
                                     single_player_placement)
     elif world.algorithm == 'vanilla_fill':
@@ -428,7 +428,7 @@ def distribute_items_restrictive(world, gftower_trash=False, fill_locations=None
     prioitempool = [item for item in world.itempool if not item.advancement and item.priority]
     restitempool = [item for item in world.itempool if not item.advancement and not item.priority]
 
-    gftower_trash &= world.algorithm in ['balanced', 'equitable', 'dungeon_only']
+    gftower_trash &= world.algorithm in ['balanced', 'dungeon_only']
     # dungeon only may fill up the dungeon... and push items out into the overworld
 
     # fill in gtower locations with trash first

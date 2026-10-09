@@ -278,7 +278,7 @@ def main(args, seed=None, fish=None):
 
     if world.players > 1:
         logger.info(world.fish.translate("cli", "cli", "balance.multiworld"))
-        if args.algorithm in ['balanced', 'equitable']:
+        if args.algorithm == 'balanced':
             balance_multiworld_progression(world)
 
     # if we only check for beatable, we can do this sanity check first before creating the rom
@@ -289,7 +289,7 @@ def main(args, seed=None, fish=None):
     for player in range(1, world.players+1):
         if world.shopsanity[player]:
             customize_shops(world, player)
-    if args.algorithm in ['balanced', 'equitable']:
+    if args.algorithm == 'balanced':
         balance_money_progression(world)
     ensure_good_items(world, True)
 
