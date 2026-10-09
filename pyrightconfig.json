@@ -1,0 +1,8 @@
+{
+  "include": ["."],
+  "exclude": ["test", "resources", "local-files", "_vendor", "bundle", "build", "dist", ".venv", "**/node_modules"],
+  "pythonVersion": "3.12",
+  "typeCheckingMode": "basic",
+  "reportMissingImports": false,
+  "reportMissingModuleSource": false
+}
