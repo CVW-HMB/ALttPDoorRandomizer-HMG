@@ -3,21 +3,22 @@
     "reportArgumentType": 1
   },
   "BaseClasses.py": {
-    "reportArgumentType": 14,
-    "reportAttributeAccessIssue": 9,
-    "reportCallIssue": 1,
-    "reportOperatorIssue": 1,
-    "reportOptionalMemberAccess": 11,
-    "reportOptionalOperand": 1,
-    "reportRedeclaration": 1
+    "reportArgumentType": 176,
+    "reportAttributeAccessIssue": 6,
+    "reportCallIssue": 3,
+    "reportOperatorIssue": 6,
+    "reportOptionalMemberAccess": 66,
+    "reportOptionalOperand": 2,
+    "reportRedeclaration": 1,
+    "reportReturnType": 2
   },
   "CLI.py": {
     "reportArgumentType": 1
   },
   "DoorShuffle.py": {
-    "reportAttributeAccessIssue": 8,
+    "reportAttributeAccessIssue": 7,
     "reportCallIssue": 7,
-    "reportOptionalMemberAccess": 20
+    "reportOptionalMemberAccess": 21
   },
   "DungeonGenerator.py": {
     "reportArgumentType": 5,
@@ -27,6 +28,7 @@
     "reportOptionalMemberAccess": 14
   },
   "Fill.py": {
+    "reportArgumentType": 1,
     "reportAttributeAccessIssue": 15
   },
   "Gui.py": {
@@ -38,11 +40,12 @@
     "reportOptionalMemberAccess": 1
   },
   "InitialSram.py": {
+    "reportArgumentType": 1,
     "reportAttributeAccessIssue": 11
   },
   "ItemList.py": {
     "reportArgumentType": 1,
-    "reportAttributeAccessIssue": 36
+    "reportAttributeAccessIssue": 30
   },
   "KeyDoorShuffle.py": {
     "reportArgumentType": 5,
@@ -52,9 +55,9 @@
     "reportOptionalMemberAccess": 43
   },
   "Main.py": {
-    "reportArgumentType": 3,
-    "reportAttributeAccessIssue": 8,
-    "reportOptionalMemberAccess": 8
+    "reportArgumentType": 9,
+    "reportAttributeAccessIssue": 2,
+    "reportOptionalMemberAccess": 9
   },
   "MultiClient.py": {
     "reportArgumentType": 3,
@@ -77,13 +80,13 @@
     "reportOptionalMemberAccess": 4
   },
   "Regions.py": {
-    "reportAttributeAccessIssue": 3,
+    "reportAttributeAccessIssue": 1,
     "reportOptionalSubscript": 1
   },
   "Rom.py": {
     "reportArgumentType": 6,
     "reportAttributeAccessIssue": 7,
-    "reportOptionalMemberAccess": 14,
+    "reportOptionalMemberAccess": 16,
     "reportOptionalOperand": 3,
     "reportOptionalSubscript": 2
   },
