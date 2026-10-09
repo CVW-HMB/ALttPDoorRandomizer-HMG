@@ -14,6 +14,7 @@ from OverworldShuffle import link_overworld, create_dynamic_exits
 from Regions import create_regions, create_dungeon_regions, create_shops, mark_light_dark_world_regions
 from RoomData import create_rooms
 from Rules import set_rules
+from UnderworldGlitchRules import create_hmg_entrances_regions, connect_hmg_entrances_regions
 from source.classes.BabelFish import BabelFish
 from source.enemizer.DamageTables import DamageTable
 from source.item.FillUtil import create_item_pool_config
@@ -55,6 +56,9 @@ def build_vanilla_world(mode='open', logic='noglitches', customizer=None, key_lo
     create_item_pool_config(world)
     link_doors(world, player)
     mark_light_dark_world_regions(world, player)
+    if logic in ('nologic', 'hybridglitches'):
+        create_hmg_entrances_regions(world, player)
+        connect_hmg_entrances_regions(world, player)
 
     generate_itempool(world, player)
     world.required_medallions[player] = ['Ether', 'Quake']
