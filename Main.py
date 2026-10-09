@@ -23,7 +23,7 @@ from DoorShuffle import link_doors, connect_portal, link_doors_prep
 from RoomData import create_rooms
 from Rules import set_rules
 from Dungeons import create_dungeons
-from Fill import distribute_items_restrictive, promote_dungeon_items, fill_dungeons_restrictive, ensure_good_items
+from Fill import distribute_items_restrictive, fill_dungeons_restrictive, ensure_good_items
 from Fill import dungeon_tracking
 from Fill import sell_potions, sell_keys, balance_multiworld_progression, balance_money_progression, lock_shop_locations
 from ItemList import generate_itempool, difficulties, fill_prizes, customize_shops, fill_specific_items
@@ -251,12 +251,9 @@ def main(args, seed=None, fish=None):
 
     logger.info(world.fish.translate("cli","cli","placing.dungeon.items"))
 
-    if args.algorithm != 'equitable':
-        shuffled_locations = world.get_unfilled_locations()
-        random.shuffle(shuffled_locations)
-        fill_dungeons_restrictive(world, shuffled_locations)
-    else:
-        promote_dungeon_items(world)
+    shuffled_locations = world.get_unfilled_locations()
+    random.shuffle(shuffled_locations)
+    fill_dungeons_restrictive(world, shuffled_locations)
 
     for player in range(1, world.players+1):
         if world.logic[player] != 'nologic':
