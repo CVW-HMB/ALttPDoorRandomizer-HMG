@@ -186,8 +186,8 @@ class World(object):
     check_beatable_only: bool
 
 
-    def __init__(self, players, shuffle, doorShuffle, logic, mode, swords, difficulty, difficulty_adjustments,
-                 timer, progressive, goal, algorithm, accessibility, shuffle_ganon, custom, customitemarray, hints, spoiler_mode):
+    def __init__(self, players: int, shuffle: dict[int, ShuffleOption], doorShuffle: dict[int, DoorShuffleOption], logic: dict[int, LogicOption], mode: dict[int, ModeOption], swords: dict[int, SwordsOption], difficulty: dict[int, DifficultyOption], difficulty_adjustments: dict[int, ItemFunctionalityOption],
+                 timer: TimerOption, progressive: ProgressiveOption, goal: dict[int, GoalOption], algorithm: AlgorithmOption, accessibility: dict[int, AccessibilityOption], shuffle_ganon: dict[int, bool], custom: bool, customitemarray: dict[int, dict[str, Any]], hints: dict[int, bool], spoiler_mode: SpoilerOption):
         self.players = players
         self.teams = 1
         self.shuffle = shuffle.copy()
@@ -256,7 +256,7 @@ class World(object):
 
 
         for player in range(1, players + 1):
-            def set_player_attr(attr, val):
+            def set_player_attr(attr: str, val: Any) -> None:
                 self.__dict__.setdefault(attr, {})[player] = val
 
             set_player_attr('_region_cache', {})
@@ -332,20 +332,20 @@ class World(object):
             set_player_attr('enabled_entrances', {})
             set_player_attr('data_tables', None)
 
-    def finish_init(self):
+    def finish_init(self) -> None:
         for player in range(1, self.players + 1):
             if self.mode[player] == 'retro':
                 self.mode[player] = 'open'
             if self.goal[player] == 'completionist':
                 self.accessibility[player] = 'locations'
 
-    def get_name_string_for_object(self, obj):
+    def get_name_string_for_object(self, obj: Any) -> str:
         return obj.name if self.players == 1 else f'{obj.name} ({self.get_player_names(obj.player)})'
 
-    def get_player_names(self, player):
+    def get_player_names(self, player: int) -> str:
         return ", ".join([name for i, name in enumerate(self.player_names[player]) if self.player_names[player].index(name) == i])
 
-    def initialize_regions(self, regions=None):
+    def initialize_regions(self, regions: list[Region] | None = None) -> None:
         for region in regions if regions else self.regions:
             region.world = self
             self._region_cache[region.player][region.name] = region
@@ -354,20 +354,20 @@ class World(object):
             for r_location in region.locations:
                 self._location_cache[r_location.name, r_location.player] = r_location
 
-    def initialize_doors(self, doors):
+    def initialize_doors(self, doors: Iterable[Door]) -> None:
         for door in doors:
             self._door_cache[(door.name, door.player)] = door
 
-    def remove_door(self, door, player):
+    def remove_door(self, door: Door, player: int) -> None:
         if (door.name, player) in self._door_cache.keys():
             del self._door_cache[(door.name, player)]
         if door in self.doors:
             self.doors.remove(door)
 
-    def get_regions(self, player=None):
+    def get_regions(self, player: int | None = None) -> Iterable[Region]:
         return self.regions if player is None else self._region_cache[player].values()
 
-    def get_region(self, regionname, player):
+    def get_region(self, regionname: str | Region, player: int) -> Region:
         if isinstance(regionname, Region):
             return regionname
         try:
@@ -379,7 +379,7 @@ class World(object):
                     return region
             raise RuntimeError('No such region %s for player %d' % (regionname, player))
 
-    def get_entrance(self, entrance, player):
+    def get_entrance(self, entrance: str | Entrance, player: int) -> Entrance:
         if isinstance(entrance, Entrance):
             return entrance
         try:
@@ -392,11 +392,11 @@ class World(object):
                         return exit
             raise RuntimeError('No such entrance %s for player %d' % (entrance, player))
 
-    def remove_entrance(self, entrance, player):
+    def remove_entrance(self, entrance: str, player: int) -> None:
         if (entrance, player) in self._entrance_cache.keys():
             del self._entrance_cache[(entrance, player)]
 
-    def get_location(self, location, player):
+    def get_location(self, location: str | Location, player: int) -> Location:
         if isinstance(location, Location):
             return location
         try:
@@ -409,12 +409,12 @@ class World(object):
                         return r_location
         raise RuntimeError('No such location %s for player %d' % (location, player))
 
-    def get_location_unsafe(self, location, player):
+    def get_location_unsafe(self, location: str, player: int) -> Location | None:
         if (location, player) in self._location_cache:
             return self._location_cache[(location, player)]
         return None
 
-    def get_dungeon(self, dungeonname, player):
+    def get_dungeon(self, dungeonname: str | Dungeon, player: int) -> Dungeon:
         if isinstance(dungeonname, Dungeon):
             return dungeonname
 
@@ -423,10 +423,10 @@ class World(object):
                 return dungeon
         raise RuntimeError('No such dungeon %s for player %d' % (dungeonname, player))
 
-    def get_dungeons(self, player):
+    def get_dungeons(self, player: int) -> list[Dungeon]:
         return [d for d in self.dungeons if d.player == player]
 
-    def get_door(self, doorname, player):
+    def get_door(self, doorname: str | Door, player: int) -> Door:
         if isinstance(doorname, Door):
             return doorname
         try:
@@ -438,7 +438,7 @@ class World(object):
                     return door
             raise RuntimeError('No such door %s for player %d' % (doorname, player))
 
-    def get_portal(self, portal_name, player):
+    def get_portal(self, portal_name: str | Portal, player: int) -> Portal:
         if isinstance(portal_name, Portal):
             return portal_name
         try:
@@ -450,7 +450,7 @@ class World(object):
                     return portal
             raise RuntimeError('No such portal %s for player %d' % (portal_name, player))
 
-    def get_portal_unsafe(self, portal_name, player):
+    def get_portal_unsafe(self, portal_name: str, player: int) -> Portal | None:
         if (portal_name, player) in self._portal_cache:
             return self._portal_cache[(portal_name, player)]
         else:
@@ -460,10 +460,10 @@ class World(object):
                     return portal
         return None
 
-    def is_atgt_swapped(self, player):
+    def is_atgt_swapped(self, player: int) -> bool:
         return self.mode[player] == 'inverted'
 
-    def is_pyramid_open(self, player):
+    def is_pyramid_open(self, player: int) -> bool:
         if self.open_pyramid[player] == 'yes':
             return True
         elif self.open_pyramid[player] == 'no':
@@ -476,7 +476,7 @@ class World(object):
             else:
                 return False
 
-    def check_for_door(self, doorname, player):
+    def check_for_door(self, doorname: str | Door, player: int) -> Door | None:
         if isinstance(doorname, Door):
             return doorname
         try:
@@ -488,7 +488,7 @@ class World(object):
                     return door
             return None
 
-    def check_for_entrance(self, entrance, player):
+    def check_for_entrance(self, entrance: str | Entrance, player: int) -> Entrance | None:
         if isinstance(entrance, Entrance):
             return entrance
         try:
@@ -501,7 +501,7 @@ class World(object):
                         return ext
             return None
 
-    def get_room(self, room_idx, player):
+    def get_room(self, room_idx: int | Room, player: int) -> Room:
         if isinstance(room_idx, Room):
             return room_idx
         try:
@@ -513,10 +513,10 @@ class World(object):
                     return room
             raise RuntimeError('No such room %s for player %d' % (room_idx, player))
 
-    def get_all_state(self, keys=False):
+    def get_all_state(self, keys: bool = False) -> CollectionState:
         ret = CollectionState(self)
 
-        def soft_collect(item):
+        def soft_collect(item: Item) -> None:
             if item.name.startswith('Progressive '):
                 if 'Sword' in item.name:
                     if ret.has('Golden Sword', item.player):
@@ -578,16 +578,16 @@ class World(object):
         ret.sweep_for_events()
         return ret
 
-    def get_items(self):
+    def get_items(self) -> list[Item]:
         return [loc.item for loc in self.get_filled_locations()] + self.itempool
 
-    def find_items(self, item, player):
+    def find_items(self, item: str, player: int) -> list[Location]:
         return [location for location in self.get_locations() if location.item is not None and location.item.name == item and location.item.player == player]
 
-    def find_items_not_key_only(self, item, player):
+    def find_items_not_key_only(self, item: str, player: int) -> list[Location]:
         return [location for location in self.get_locations() if location.item is not None and location.item.name == item and location.item.player == player and location.forced_item is None]
 
-    def push_precollected(self, item):
+    def push_precollected(self, item: Item) -> None:
         item.world = self
         if ((item.smallkey and self.keyshuffle[item.player] != 'none')
                 or (item.bigkey and self.bigkeyshuffle[item.player])):
@@ -595,7 +595,7 @@ class World(object):
         self.precollected_items.append(item)
         self.state.collect(item, True)
 
-    def push_item(self, location, item, collect=True):
+    def push_item(self, location: Location, item: Item, collect: bool = True) -> None:
         if not isinstance(location, Location):
             raise RuntimeError('Cannot assign item %s to location %s (player %d).' % (item, location, item.player))
 
@@ -612,47 +612,47 @@ class World(object):
         else:
             raise RuntimeError('Cannot assign item %s to location %s.' % (item, location))
 
-    def get_entrances(self):
+    def get_entrances(self) -> list[Entrance]:
         if self._cached_entrances is None:
             self._cached_entrances = []
             for region in self.regions:
                 self._cached_entrances.extend(region.entrances)
         return self._cached_entrances
 
-    def clear_entrance_cache(self):
+    def clear_entrance_cache(self) -> None:
         self._cached_entrances = None
 
-    def get_locations(self):
+    def get_locations(self) -> list[Location]:
         if self._cached_locations is None:
             self._cached_locations = []
             for region in self.regions:
                 self._cached_locations.extend(region.locations)
         return self._cached_locations
 
-    def clear_location_cache(self):
+    def clear_location_cache(self) -> None:
         self._cached_locations = None
 
-    def clear_exp_cache(self):
+    def clear_exp_cache(self) -> None:
         for p in range(1, self.players + 1):
             self.exp_cache[p].clear()
 
-    def get_unfilled_locations(self, player=None):
+    def get_unfilled_locations(self, player: int | None = None) -> list[Location]:
         return [location for location in self.get_locations() if (player is None or location.player == player) and location.item is None]
 
-    def get_filled_locations(self, player=None):
+    def get_filled_locations(self, player: int | None = None) -> list[Location]:
         return [location for location in self.get_locations() if (player is None or location.player == player) and location.item is not None]
 
-    def get_reachable_locations(self, state=None, player=None):
+    def get_reachable_locations(self, state: CollectionState | None = None, player: int | None = None) -> list[Location]:
         if state is None:
             state = self.state
         return [location for location in self.get_locations() if (player is None or location.player == player) and location.can_reach(state)]
 
-    def get_placeable_locations(self, state=None, player=None):
+    def get_placeable_locations(self, state: CollectionState | None = None, player: int | None = None) -> list[Location]:
         if state is None:
             state = self.state
         return [location for location in self.get_locations() if (player is None or location.player == player) and location.item is None and location.can_reach(state)]
 
-    def unlocks_new_location(self, item):
+    def unlocks_new_location(self, item: Item) -> bool:
         temp_state = self.state.copy()
         temp_state.collect(item, True)
 
@@ -662,13 +662,13 @@ class World(object):
 
         return False
 
-    def has_beaten_game(self, state, player=None):
+    def has_beaten_game(self, state: CollectionState, player: int | None = None) -> bool:
         if player:
             return state.has('Triforce', player)
         else:
             return all((self.has_beaten_game(state, p) for p in range(1, self.players + 1)))
 
-    def can_beat_game(self, starting_state=None, log_error=False):
+    def can_beat_game(self, starting_state: CollectionState | None = None, log_error: bool = False) -> bool:
         if starting_state:
             if self.has_beaten_game(starting_state):
                 return True
