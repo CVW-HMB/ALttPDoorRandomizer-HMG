@@ -34,6 +34,9 @@ def dungeon_tracking(world):
         layout.free_items = layout.location_cnt - layout.dungeon_items
 
 
+hmg_swamp_pot_keys = ['Swamp Palace - Trench 1 Pot Key', 'Swamp Palace - Pot Row Pot Key']
+
+
 def fill_dungeons_restrictive(world, shuffled_locations):
 
     # with shuffled dungeon items they are distributed as part of the normal item pool
@@ -69,12 +72,13 @@ def fill_dungeons_restrictive(world, shuffled_locations):
                 if count_to_remove == len(to_remove):
                     break
             for wix in reversed(to_remove):
+                unplaced_smalls.remove(smalls[wix])
                 del smalls[wix]
             # remove 2 swamp locations from pool
             hybrid_locations = []
             to_remove = []
             for i, loc in enumerate(shuffled_locations):
-                if loc.name in ['Swamp Palace - Trench 1 Pot Key', 'Swamp Palace - Pot Row Pot Key'] and loc.player == player:
+                if loc.name in hmg_swamp_pot_keys and loc.player == player:
                     to_remove.append(i)
                     hybrid_locations.append(loc)
                 if count_to_remove == len(to_remove):
@@ -208,8 +212,8 @@ def valid_key_placement(item, location, key_pool, collection_state, world):
     if dungeon:
         if dungeon.name not in item.name and (dungeon.name != 'Hyrule Castle' or 'Escape' not in item.name):
             return True
-        # Small key and big key in Swamp and Hera are placed without logic
-        if world.logic[item.player] == 'hybridglitches' and dungeon.name in ['Tower of Hera', 'Swamp Palace'] and dungeon.name in item.name:
+        # the two Swamp pot keys reserved for the clip route are placed without logic
+        if world.logic[item.player] == 'hybridglitches' and location.name in hmg_swamp_pot_keys:
             return True
         key_logic = world.key_logic[item.player][dungeon.name]
         unplaced_keys = len([x for x in key_pool if x.name == key_logic.small_key_name and x.player == item.player])
