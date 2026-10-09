@@ -1376,6 +1376,7 @@ def patch_rom(world, rom, player, team, is_mystery=False):
     world.spoiler.dig_game_digs[player_name] = digging_game_rng
 
     rom.write_byte(0x1800A3, 0x00 if glitches_enabled else 0x01)  # enable correct world setting behaviour after agahnim kills
+    rom.write_byte(0x159A8, 0x02 if world.logic[player] in ['hybridglitches', 'nologic'] else 0x04)  # zelda S&Q mirror fix
     rom.write_byte(0x1800A4, 0x01 if not glitches_enabled else 0x00)  # enable POD EG fix
     rom.write_byte(0x180042, 0x01 if world.save_and_quit_from_boss else 0x00)  # Allow Save and Quit after boss kill
     rom.write_byte(0x180358, 0x01 if glitches_enabled else 0x00)
