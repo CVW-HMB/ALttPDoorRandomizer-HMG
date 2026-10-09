@@ -1327,7 +1327,7 @@ def patch_rom(world, rom, player, team, is_mystery=False):
                               | (0x02 if world.bigkeyshuffle[player] else 0x00)
                               | (0x04 if world.mapshuffle[player] or enable_menu_map_check else 0x00)
                               | (0x08 if world.compassshuffle[player] else 0x00)  # free roaming items in menu
-                              | (0x10 if world.logic[player] == 'nologic' else 0)))  # boss icon
+                              | (0x10 if world.logic[player] in ['hybridglitches', 'nologic'] else 0)))  # boss icon
 
     # Map reveals
     reveal_bytes = {
