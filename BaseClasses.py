@@ -1,9 +1,12 @@
+from __future__ import annotations
+
 import base64
 import copy
 import json
 import logging
 from collections import OrderedDict, Counter, deque, defaultdict
 from enum import Enum, unique
+from typing import Any, TYPE_CHECKING
 
 try:
     from fast_enum import FastEnum
@@ -11,14 +14,130 @@ except ImportError:
     from enum import IntFlag as FastEnum
 
 from source.classes.BabelFish import BabelFish
+from source.classes.SettingTypes import (AccessibilityOption, AlgorithmOption, AnyEnemyLogicOption,
+    BeemizerOption, BowModeOption, CrystalsGanonOption, CrystalsGtOption, DifficultyOption,
+    DoorShuffleOption, DoorTypeModeOption, DropshuffleOption, DungeonCountersOption, EnemyDamageOption,
+    EnemyHealthOption, FluteModeOption, GoalOption, ItemFunctionalityOption, KeyLogicAlgorithmOption,
+    KeyshuffleOption, LinkedDropsOption, LogicOption, MixedTravelOption, ModeOption, OpenpyramidOption,
+    OverworldMapOption, PotteryOption, ProgressiveOption, RestrictBossItemsOption, ShuffleOption,
+    ShufflebossesOption, ShuffleenemiesOption, SkullwoodsOption, SpoilerOption, StandardizePalettesOption,
+    SwordsOption, TakeAnyOption, TimerOption, TrapDoorModeOption)
 from Utils import int16_as_bytes
 from Tables import normal_offset_table, spiral_offset_table, multiply_lookup, divisor_lookup
 from RoomData import Room
 from source.dungeon.RoomObject import RoomObject
 from source.overworld.EntranceData import door_addresses, indirect_connections
 
+if TYPE_CHECKING:
+    from source.classes.CustomSettings import CustomSettings
+
 
 class World(object):
+    players: int
+    teams: int
+    seed: int | str | None
+    timer: TimerOption
+    progressive: ProgressiveOption
+    algorithm: AlgorithmOption
+    custom: bool
+    customitemarray: dict[int, dict[str, Any]]
+    spoiler_mode: SpoilerOption
+    settings: CustomSettings
+    customizer: CustomSettings | None
+    rom_seeds: dict[int, int]
+    fish: BabelFish
+
+    shuffle: dict[int, ShuffleOption]
+    doorShuffle: dict[int, DoorShuffleOption]
+    logic: dict[int, LogicOption]
+    mode: dict[int, ModeOption]
+    swords: dict[int, SwordsOption]
+    difficulty: dict[int, DifficultyOption]
+    difficulty_adjustments: dict[int, ItemFunctionalityOption]
+    goal: dict[int, GoalOption]
+    accessibility: dict[int, AccessibilityOption]
+    door_type_mode: dict[int, DoorTypeModeOption]
+    trap_door_mode: dict[int, TrapDoorModeOption]
+    key_logic_algorithm: dict[int, KeyLogicAlgorithmOption]
+    keyshuffle: dict[int, KeyshuffleOption]
+    flute_mode: dict[int, FluteModeOption]
+    bow_mode: dict[int, BowModeOption]
+    crystals_ganon_orig: dict[int, CrystalsGanonOption]
+    crystals_gt_orig: dict[int, CrystalsGtOption]
+    open_pyramid: dict[int, OpenpyramidOption]
+    boss_shuffle: dict[int, ShufflebossesOption]
+    enemy_shuffle: dict[int, ShuffleenemiesOption]
+    enemy_health: dict[int, EnemyHealthOption]
+    enemy_damage: dict[int, EnemyDamageOption]
+    any_enemy_logic: dict[int, AnyEnemyLogicOption]
+    beemizer: dict[int, BeemizerOption]
+    dungeon_counters: dict[int, DungeonCountersOption]
+    dropshuffle: dict[int, DropshuffleOption]
+    pottery: dict[int, PotteryOption]
+    mixed_travel: dict[int, MixedTravelOption]
+    standardize_palettes: dict[int, StandardizePalettesOption]
+    skullwoods: dict[int, SkullwoodsOption]
+    linked_drops: dict[int, LinkedDropsOption]
+    overworld_map: dict[int, OverworldMapOption]
+    take_any: dict[int, TakeAnyOption]
+    restrict_boss_items: dict[int, RestrictBossItemsOption]
+
+    hints: dict[int, bool]
+    shuffle_ganon: dict[int, bool]
+    boots_hint: dict[int, bool]
+    remote_items: dict[int, bool]
+    mapshuffle: dict[int, bool]
+    compassshuffle: dict[int, bool]
+    bigkeyshuffle: dict[int, bool]
+    bombbag: dict[int, bool]
+    decoupledoors: dict[int, bool]
+    door_self_loops: dict[int, bool]
+    experimental: dict[int, bool]
+    shopsanity: dict[int, bool]
+    potshuffle: dict[int, bool]
+    shufflelinks: dict[int, bool]
+    shuffletavern: dict[int, bool]
+    pseudoboots: dict[int, bool]
+    mirrorscroll: dict[int, bool]
+    collection_rate: dict[int, bool]
+    colorizepots: dict[int, bool]
+    aga_randomness: dict[int, bool]
+    swamp_patch_required: dict[int, bool]
+    powder_patch_required: dict[int, bool]
+    ganon_at_pyramid: dict[int, bool]
+    ganonstower_vanilla: dict[int, bool]
+    sewer_light_cone: dict[int, bool]
+    fix_trock_doors: dict[int, bool]
+    fix_skullwoods_exit: dict[int, bool]
+    fix_palaceofdarkness_exit: dict[int, bool]
+    fix_trock_exit: dict[int, bool]
+    fix_gtower_exit: dict[int, bool]
+    fix_fake_world: dict[int, bool]
+    free_lamp_cone: dict[int, bool]
+
+    intensity: dict[int, int]
+    crystals_needed_for_ganon: dict[int, int]
+    crystals_needed_for_gt: dict[int, int]
+    money_balance: dict[int, int]
+    treasure_hunt_count: dict[int, int]
+    treasure_hunt_total: dict[int, int]
+
+    treasure_hunt_icon: dict[int, str]
+    player_names: dict[int, list[str]]
+    required_medallions: dict[int, list[str]]
+    bottle_refills: dict[int, list[str]]
+    escape_assist: dict[int, list[str]]
+    difficulty_requirements: dict[int, Any]
+    force_enemy: dict[int, Any]
+    pot_contents: dict[int, Any]
+    pot_pool: dict[int, dict[Any, Any]]
+    force_fix: dict[int, dict[str, bool]]
+    data_tables: dict[int, Any]
+    can_access_trock_eyebridge: dict[int, bool | None]
+    can_access_trock_front: dict[int, bool | None]
+    can_access_trock_big_chest: dict[int, bool | None]
+    can_access_trock_middle: dict[int, bool | None]
+
 
     def __init__(self, players, shuffle, doorShuffle, logic, mode, swords, difficulty, difficulty_adjustments,
                  timer, progressive, goal, algorithm, accessibility, shuffle_ganon, custom, customitemarray, hints, spoiler_mode):
