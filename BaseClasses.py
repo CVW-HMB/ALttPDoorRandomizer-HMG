@@ -710,29 +710,29 @@ class World(object):
 
 class CollectionState(object):
 
-    def __init__(self, parent, skip_init=False):
-        self.world = parent
+    def __init__(self, parent: World, skip_init: bool = False) -> None:
+        self.world: World = parent
         if not skip_init:
-            self.prog_items = Counter()
-            self.forced_keys = Counter()
-            self.reachable_regions = {player: dict() for player in range(1, parent.players + 1)}
-            self.blocked_connections = {player: dict() for player in range(1, parent.players + 1)}
-            self.events = []
-            self.path = {}
-            self.locations_checked = set()
-            self.stale = {player: True for player in range(1, parent.players + 1)}
+            self.prog_items: Counter[tuple[str, int]] = Counter()
+            self.forced_keys: Counter[Any] = Counter()
+            self.reachable_regions: dict[int, dict[Region, CrystalBarrier]] = {player: dict() for player in range(1, parent.players + 1)}
+            self.blocked_connections: dict[int, dict[Entrance, CrystalBarrier]] = {player: dict() for player in range(1, parent.players + 1)}
+            self.events: list[Any] = []
+            self.path: dict[Region, Any] = {}
+            self.locations_checked: set[Location] = set()
+            self.stale: dict[int, bool] = {player: True for player in range(1, parent.players + 1)}
             for item in parent.precollected_items:
                 self.collect(item, True)
             # reached vs. opened in the counter
-            self.door_counter = {player: (Counter(), Counter()) for player in range(1, parent.players + 1)}
-            self.reached_doors = {player: set() for player in range(1, parent.players + 1)}
-            self.opened_doors = {player: set() for player in range(1, parent.players + 1)}
-            self.dungeons_to_check = {player: defaultdict(dict) for player in range(1, parent.players + 1)}
-        self.dungeon_limits = None
-        self.placing_items = None
+            self.door_counter: dict[int, tuple[Counter[str], Counter[str]]] = {player: (Counter(), Counter()) for player in range(1, parent.players + 1)}
+            self.reached_doors: dict[int, set[str]] = {player: set() for player in range(1, parent.players + 1)}
+            self.opened_doors: dict[int, set[str]] = {player: set() for player in range(1, parent.players + 1)}
+            self.dungeons_to_check: dict[int, defaultdict[str, dict[str, tuple[Entrance, CrystalBarrier]]]] = {player: defaultdict(dict) for player in range(1, parent.players + 1)}
+        self.dungeon_limits: list[str] | None = None
+        self.placing_items: list[Item] | None = None
         # self.trace = None
 
-    def can_reach_from(self, spot, start, player=None):
+    def can_reach_from(self, spot: str, start: Any, player: int | None = None) -> bool:
         old_state = self.copy()
         # old_state.path = {old_state.world.get_region(start, player)}
         old_state.stale[player] = False
@@ -768,7 +768,7 @@ class CollectionState(object):
         else:
             return False
 
-    def update_reachable_regions(self, player):
+    def update_reachable_regions(self, player: int) -> None:
         self.stale[player] = False
         rrp = self.reachable_regions[player]
         bc = self.blocked_connections[player]
@@ -791,7 +791,7 @@ class CollectionState(object):
             if len(unresolved_events) == 0:
                 self.check_key_doors_in_dungeons(rrp, player)
 
-    def traverse_world(self, queue, rrp, bc, player):
+    def traverse_world(self, queue: deque[tuple[Entrance, CrystalBarrier]], rrp: dict[Region, CrystalBarrier], bc: dict[Entrance, CrystalBarrier], player: int) -> None:
         # run BFS on all connections, and keep track of those blocked by missing items
         while len(queue) > 0:
             connection, crystal_state = queue.popleft()
@@ -857,7 +857,7 @@ class CollectionState(object):
                         if key_logic.sm_doors[door]:
                             opened_doors.add(key_logic.sm_doors[door].name)
 
-    def should_visit(self, new_region, rrp, crystal_state, player):
+    def should_visit(self, new_region: Region | None, rrp: dict[Region, CrystalBarrier], crystal_state: CrystalBarrier, player: int) -> bool:
         if not new_region:
             return False
         if self.dungeon_limits and not self.possibly_connected_to_dungeon(new_region, player):
@@ -868,18 +868,18 @@ class CollectionState(object):
             return False
         return (rrp[new_region] & crystal_state) != crystal_state
 
-    def possibly_connected_to_dungeon(self, new_region, player):
+    def possibly_connected_to_dungeon(self, new_region: Region, player: int) -> bool:
         if new_region.dungeon:
             return new_region.dungeon.name in self.dungeon_limits
         else:
             return new_region.name in self.world.inaccessible_regions[player]
 
     @staticmethod
-    def valid_crystal(door, new_crystal_state):
+    def valid_crystal(door: Door, new_crystal_state: CrystalBarrier) -> bool:
         return (not door.crystal or door.crystal == CrystalBarrier.Either or new_crystal_state == CrystalBarrier.Either
                 or new_crystal_state == door.crystal or door.alternative_crystal_rule)
 
-    def check_key_doors_in_dungeons(self, rrp, player):
+    def check_key_doors_in_dungeons(self, rrp: dict[Region, CrystalBarrier], player: int) -> None:
         for dungeon_name, checklist in self.dungeons_to_check[player].items():
             # todo: optimization idea - abort exploration if there are unresolved events now
             if self.apply_dungeon_exploration(rrp, player, dungeon_name, checklist):
@@ -1011,28 +1011,28 @@ class CollectionState(object):
             checklist.clear()
 
     @staticmethod
-    def comb_crys(a, b):
+    def comb_crys(a: CrystalBarrier, b: CrystalBarrier) -> CrystalBarrier:
         return a if a == b or a != CrystalBarrier.Either else b
 
     @staticmethod
-    def crys_agree(a, b):
+    def crys_agree(a: CrystalBarrier, b: CrystalBarrier) -> bool:
         return a == b or a == CrystalBarrier.Either or b == CrystalBarrier.Either
 
-    def find_door_pair(self, player, dungeon_name, name):
+    def find_door_pair(self, player: int, dungeon_name: str, name: str) -> str | None:
         for door in self.world.key_logic[player][dungeon_name].sm_doors.keys():
             if door.name == name:
                 paired_door = self.world.key_logic[player][dungeon_name].sm_doors[door]
                 return paired_door.name if paired_door else None
         return None
 
-    def set_dungeon_limits(self, player, dungeon_name):
+    def set_dungeon_limits(self, player: int, dungeon_name: str) -> None:
         if self.world.keyshuffle[player] == 'universal' and self.world.mode[player] == 'standard':
             self.dungeon_limits = ['Hyrule Castle', 'Agahnims Tower']
         else:
             self.dungeon_limits = [dungeon_name]
 
     @staticmethod
-    def should_explore_child_state(state, dungeon_name, player):
+    def should_explore_child_state(state: CollectionState, dungeon_name: str, player: int) -> list[str | tuple[str, str]] | None:
         small_key_name = dungeon_keys[dungeon_name]
         key_total = state.prog_items[(small_key_name, player)]
         remaining_keys = key_total - state.door_counter[player][1][dungeon_name]
@@ -1068,7 +1068,7 @@ class CollectionState(object):
         return door_candidates if door_candidates else None
 
     @staticmethod
-    def print_rrp(rrp):
+    def print_rrp(rrp: dict[Region, Any]) -> None:
         logger = logging.getLogger('')
         logger.debug('RRP Checking')
         for region, packet in rrp.items():
@@ -1078,7 +1078,7 @@ class CollectionState(object):
                 logger.debug(f'{logic[i]}')
                 logger.debug(f'{",".join(str(x) for x in path[i])}')
 
-    def copy(self):
+    def copy(self) -> CollectionState:
         ret = CollectionState(self.world, skip_init=True)
         ret.prog_items = self.prog_items.copy()
         ret.forced_keys = self.forced_keys.copy()
@@ -1099,7 +1099,7 @@ class CollectionState(object):
         ret.placing_items = self.placing_items
         return ret
 
-    def apply_dungeon_exploration(self, rrp, player, dungeon_name, checklist):
+    def apply_dungeon_exploration(self, rrp: dict[Region, CrystalBarrier], player: int, dungeon_name: str, checklist: dict[str, tuple[Entrance, CrystalBarrier]]) -> bool:
         bc = self.blocked_connections[player]
         ec = self.world.exp_cache[player]
         prog_set = self.reduce_prog_items(player, dungeon_name)
@@ -1140,14 +1140,15 @@ class CollectionState(object):
             return True
         return False
 
-    def record_dungeon_exploration(self, player, dungeon_name, checklist,
-                                   common_doors, missing_regions, missing_bc, paths):
+    def record_dungeon_exploration(self, player: int, dungeon_name: str, checklist: dict[str, tuple[Entrance, CrystalBarrier]],
+                                   common_doors: set[str], missing_regions: dict[Region, CrystalBarrier],
+                                   missing_bc: dict[Entrance, CrystalBarrier], paths: dict[Region, Any]) -> None:
         ec = self.world.exp_cache[player]
         prog_set = self.reduce_prog_items(player, dungeon_name)
         exp_key = (prog_set, frozenset(checklist))
         ec[dungeon_name][exp_key] = (common_doors, missing_regions, missing_bc, paths)
 
-    def reduce_prog_items(self, player, dungeon_name):
+    def reduce_prog_items(self, player: int, dungeon_name: str) -> frozenset[tuple[tuple[str, int], int]]:
         # todo: possibly could include an analysis of dungeon items req. like Hammer, Hookshot, etc
         # cross dungeon requirements may be necessary for keysanity - which invalidates the above
         # todo: universal smalls where needed
@@ -1171,7 +1172,7 @@ class CollectionState(object):
             reduced[('Heart Container', player)] = 1
         return frozenset(reduced.items())
 
-    def check_if_progressive(self, item_name, player):
+    def check_if_progressive(self, item_name: str, player: int) -> bool:
         return (item_name in
                 ['Bow', 'Progressive Bow', 'Progressive Bow (Alt)', 'Book of Mudora', 'Hammer', 'Hookshot',
                  'Magic Mirror', 'Ocarina', 'Pegasus Boots', 'Power Glove', 'Cape', 'Mushroom', 'Shovel',
