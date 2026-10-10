@@ -13,6 +13,12 @@ heraswamp_spots = [("Hera to Swamp Clip", "Mire Torches Top", "Swamp Portal")]
 
 icepalace_spots = [("Ice Lobby Clip", "Ice Lobby", "Ice Bomb Drop - Top")]
 
+thievesdesert_spots = [
+    ("Thieves to Desert West Clip", "Thieves Attic", "Desert West Portal"),
+    ("Thieves to Desert South Clip", "Thieves Attic", "Desert South Portal"),
+    ("Thieves to Desert East Clip", "Thieves Attic", "Desert East Portal"),
+]
+
 specrock_spots = [
     ("Spec Rock Clip", "Spectacle Rock Cave (Peak)", "Spectacle Rock Cave (Top)")
 ]
@@ -21,15 +27,22 @@ paradox_spots = [
     ("Paradox Front Teleport", "Paradox Cave Front", "Paradox Cave Chest Area")
 ]
 
-def create_hmg_entrances_regions(world, player):
-    for spots in [
+def clip_spot_lists(world, player):
+    spots = [
         kikiskip_spots,
         mirehera_spots,
         heraswamp_spots,
         icepalace_spots,
         specrock_spots,
         paradox_spots,
-    ]:
+    ]
+    if world.logic[player] == "nologic":
+        spots.append(thievesdesert_spots)
+    return spots
+
+
+def create_hmg_entrances_regions(world, player):
+    for spots in clip_spot_lists(world, player):
         for entrance, parent_region, _, *_ in spots:
             parent = world.get_region(parent_region, player)
             connection = Entrance(player, entrance, parent)
@@ -42,14 +55,7 @@ def create_hmg_entrances_regions(world, player):
     ip_bomb_top_reg.exits.append(ip_clip_entrance)
 
 def connect_hmg_entrances_regions(world, player):
-    for spots in [
-        kikiskip_spots,
-        mirehera_spots,
-        heraswamp_spots,
-        icepalace_spots,
-        specrock_spots,
-        paradox_spots,
-    ]:
+    for spots in clip_spot_lists(world, player):
         for entrance, _, target_region, *_ in spots:
             connection = world.get_entrance(entrance, player)
             if world.fix_fake_world[player] and target_region.endswith(" Portal"):
@@ -93,6 +99,7 @@ def dungeon_reentry_rules(
         + mirehera_spots
         + heraswamp_spots
         + icepalace_spots
+        + thievesdesert_spots
         + specrock_spots
         + paradox_spots
     ]
