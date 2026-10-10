@@ -212,9 +212,13 @@ def valid_key_placement(item, location, key_pool, collection_state, world):
     if dungeon:
         if dungeon.name not in item.name and (dungeon.name != 'Hyrule Castle' or 'Escape' not in item.name):
             return True
-        # the two Swamp pot keys reserved for the clip route are placed without logic
-        if world.logic[item.player] == 'hybridglitches' and location.name in hmg_swamp_pot_keys:
-            return True
+        # HMG: Hera is reached in Mire state, and Swamp doors open with all six Mire keys when Mire has that many,
+        # so those keys follow the access rules rather than the door counting logic
+        if world.logic[item.player] == 'hybridglitches' and dungeon.name in item.name:
+            if dungeon.name == 'Tower of Hera' or location.name in hmg_swamp_pot_keys:
+                return True
+            if dungeon.name == 'Swamp Palace' and len(world.get_dungeon('Misery Mire', item.player).small_keys) >= 6:
+                return True
         key_logic = world.key_logic[item.player][dungeon.name]
         unplaced_keys = len([x for x in key_pool if x.name == key_logic.small_key_name and x.player == item.player])
         prize_loc = None

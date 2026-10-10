@@ -2215,6 +2215,9 @@ def validate_key_placement(key_layout, world, player):
     if world.logic[player] == 'hybridglitches':
         # Swamp keylogic
         if smallkey_name.endswith('(Swamp Palace)'):
+            # with six Mire keys the rules open every Swamp door from Mire state
+            if len(world.get_dungeon('Misery Mire', player).small_keys) >= 6:
+                keys_outside += 6
             swamp_entrance = world.get_location('Swamp Palace - Entrance', player)
             # Swamp small not vanilla
             if swamp_entrance.item is None or (swamp_entrance.item.name != smallkey_name or swamp_entrance.item.player != player):

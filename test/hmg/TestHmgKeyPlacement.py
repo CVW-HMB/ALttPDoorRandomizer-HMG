@@ -20,6 +20,10 @@ class TestHmgKeyPlacement(unittest.TestCase):
         for seed in range(1, 5):
             generate(seed, '--pottery', 'lottery', '--dropshuffle', 'underworld')
 
+    def testPotKeysAndDropKeys(self):
+        for seed in range(1, 5):
+            generate(seed, '--pottery', 'keys', '--dropshuffle', 'keys')
+
 
 if __name__ == '__main__':
     unittest.main()
