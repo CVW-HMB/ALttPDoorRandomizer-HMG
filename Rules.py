@@ -2039,7 +2039,7 @@ def set_bunny_rules(world, player, inverted):
     # regions for the exits of multi-entrace caves/drops that bunny cannot pass
     # Note spiral cave may be technically passible, but it would be too absurd to require since OHKO mode is a thing.
     all_single_exit_dungeons = ['Eastern Palace', 'Tower of Hera', 'Castle Tower', 'Palace of Darkness', 'Swamp Palace', 'Thieves Town', 'Ice Palace', 'Misery Mire', 'Ganons Tower']
-    hmg_single_exit_dungeons = [d for d in all_single_exit_dungeons if d not in ['Tower of Hera', 'Misery Mire', 'Thieves Town']]
+    hmg_single_exit_dungeons = [d for d in all_single_exit_dungeons if d not in ['Tower of Hera', 'Misery Mire']]
     bunny_impassable_caves = ['Bumper Cave (top)', 'Bumper Cave (bottom)', 'Two Brothers House',
                               'Hookshot Cave (Middle)', 'Pyramid', 'Spiral Cave (Top)', 'Fairy Ascension Cave (Drop)']
     bunny_accessible_locations = ['Link\'s Uncle', 'Sahasrahla', 'Sick Kid', 'Lost Woods Hideout', 'Lumberjack Tree',

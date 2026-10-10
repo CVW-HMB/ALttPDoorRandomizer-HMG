@@ -13,12 +13,6 @@ heraswamp_spots = [("Hera to Swamp Clip", "Mire Torches Top", "Swamp Portal")]
 
 icepalace_spots = [("Ice Lobby Clip", "Ice Lobby", "Ice Bomb Drop - Top")]
 
-thievesdesert_spots = [
-    ("Thieves to Desert West Clip", "Thieves Attic", "Desert West Portal"),
-    ("Thieves to Desert South Clip", "Thieves Attic", "Desert South Portal"),
-    ("Thieves to Desert East Clip", "Thieves Attic", "Desert East Portal"),
-]
-
 specrock_spots = [
     ("Spec Rock Clip", "Spectacle Rock Cave (Peak)", "Spectacle Rock Cave (Top)")
 ]
@@ -33,7 +27,6 @@ def create_hmg_entrances_regions(world, player):
         mirehera_spots,
         heraswamp_spots,
         icepalace_spots,
-        thievesdesert_spots,
         specrock_spots,
         paradox_spots,
     ]:
@@ -54,7 +47,6 @@ def connect_hmg_entrances_regions(world, player):
         mirehera_spots,
         heraswamp_spots,
         icepalace_spots,
-        thievesdesert_spots,
         specrock_spots,
         paradox_spots,
     ]:
@@ -101,7 +93,6 @@ def dungeon_reentry_rules(
         + mirehera_spots
         + heraswamp_spots
         + icepalace_spots
-        + thievesdesert_spots
         + specrock_spots
         + paradox_spots
     ]
@@ -192,7 +183,6 @@ def underworld_glitches_rules(world, player):
     for clip in (
         kikiskip_spots
         + icepalace_spots
-        + thievesdesert_spots
         + specrock_spots
     ):
         region = world.get_region(clip[1], player)
@@ -209,7 +199,7 @@ def underworld_glitches_rules(world, player):
             combine="or",
         )
 
-    for spot in kikiskip_spots + thievesdesert_spots:
+    for spot in kikiskip_spots:
         dungeon_reentry_rules(
             world,
             player,
@@ -328,16 +318,6 @@ def underworld_glitches_rules(world, player):
             lambda state: mirrorless_moat_rule(state),
             combine="or",
         )
-    desert_exits = ["West", "South", "East"]
-
-    for desert_exit in desert_exits:
-        Rules.add_rule(
-            world.get_entrance(f"Thieves to Desert {desert_exit} Clip", player),
-            lambda state: state.can_dash_clip(
-                world.get_region("Thieves Attic", player), player
-            ),
-        )
-
 
     # Collecting left chests in Paradox Cave using a dash clip -> dash citrus, 1f right, teleport up
     paradox_left_chests = [
