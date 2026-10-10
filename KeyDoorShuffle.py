@@ -2215,7 +2215,6 @@ def validate_key_placement(key_layout, world, player):
     if world.logic[player] == 'hybridglitches':
         # Swamp keylogic
         if smallkey_name.endswith('(Swamp Palace)'):
-            # with six Mire keys the rules open every Swamp door from Mire state
             if len(world.get_dungeon('Misery Mire', player).small_keys) >= 6:
                 keys_outside += 6
             swamp_entrance = world.get_location('Swamp Palace - Entrance', player)
@@ -2227,7 +2226,6 @@ def validate_key_placement(key_layout, world, player):
                 mire_keys_in_swamp = sum([1 if x.item.name == mire_smallkey_name else 0 for x in key_layout.item_locations if x.item is not None and x != swamp_entrance])
                 if mire_keys_in_swamp == 0:
                     keys_outside +=1 
-        # the lobby clip lands past Ice Jelly Key Down Stairs, so that door costs no key
         if smallkey_name.endswith('(Ice Palace)'):
             keys_outside += 1
         # Mire keylogic

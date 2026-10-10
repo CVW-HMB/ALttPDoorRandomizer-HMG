@@ -614,9 +614,10 @@ class CollectionState(object):
             for conn in start.exits:
                 bc[conn] = CrystalBarrier.Orange
 
-        queue = deque(self.blocked_connections[player].items())
-
-        self.traverse_world(queue, rrp, bc, player)
+        reached = -1
+        while reached != len(rrp):
+            reached = len(rrp)
+            self.traverse_world(deque(bc.items()), rrp, bc, player)
         if self.world.key_logic_algorithm[player] == 'dangerous':
             unresolved_events = [x for y in self.reachable_regions[player] for x in y.locations
                                  if x.event and x.item and (x.item.smallkey or x.item.bigkey or x.item.advancement)

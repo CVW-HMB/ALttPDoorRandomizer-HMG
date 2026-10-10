@@ -212,8 +212,6 @@ def valid_key_placement(item, location, key_pool, collection_state, world):
     if dungeon:
         if dungeon.name not in item.name and (dungeon.name != 'Hyrule Castle' or 'Escape' not in item.name):
             return True
-        # HMG: Hera is reached in Mire state, and Swamp doors open with all six Mire keys when Mire has that many,
-        # so those keys follow the access rules rather than the door counting logic
         if world.logic[item.player] == 'hybridglitches' and dungeon.name in item.name:
             if dungeon.name == 'Tower of Hera' or location.name in hmg_swamp_pot_keys:
                 return True
